@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>A8C3576B-C9FF-4E43-8A53-925794167DE0</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>dgt.apower.http</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)AuthenticationExtension.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Contracts\AccessControlAccessToken.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Contracts\MicrosoftOnlineAccessToken.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpUtils.cs" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>dgt.apower.keyvault</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.49" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Digitall.APower\Digitall.APower.csproj" />
+    <ProjectReference Include="..\Digitall.APower.EnvironmentVariables\Digitall.APower.EnvironmentVariables.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="packages.lock.json" />
+  </ItemGroup>
+
+  <Import Project="..\dgt.apower.http\dgt.apower.http.projitems" Label="Shared" />
+
+</Project>
