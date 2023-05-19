@@ -1,0 +1,17 @@
+  <Project>
+    <PropertyGroup>
+      <ParentDirectoryBuildPropsPath>$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)..\'))</ParentDirectoryBuildPropsPath>
+    </PropertyGroup>
+
+    <ImportGroup>
+      <Import Project="$(ParentDirectoryBuildPropsPath)" />
+    </ImportGroup>
+
+    <PropertyGroup>
+      <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+      <AnalysisLevel>latest-recommended</AnalysisLevel>
+      <EmbedUntrackedSources>true</EmbedUntrackedSources>
+      <SignAssembly>True</SignAssembly>
+    </PropertyGroup>
+
+</Project>

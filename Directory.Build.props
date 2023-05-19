@@ -14,10 +14,6 @@
 
   <PropertyGroup>
     <TargetFramework>net462</TargetFramework>
-    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-    <AnalysisLevel>latest-recommended</AnalysisLevel>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <SignAssembly>True</SignAssembly>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
 
