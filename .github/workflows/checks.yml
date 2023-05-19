@@ -2,12 +2,15 @@ name: Check DGTA
 
 on:
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "beta" ]
 
 jobs:
   check:
-    name: Build & Test
-    runs-on: windows-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    name: Build & Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 15
     permissions:
       id-token: write

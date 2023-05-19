@@ -4,11 +4,12 @@ on:
   push:
     branches-ignore:
       - master
+      - beta
 
 jobs:
   build:
     name: Build
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
     - uses: actions/checkout@v3
