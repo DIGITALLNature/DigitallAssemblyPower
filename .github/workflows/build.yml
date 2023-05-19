@@ -13,11 +13,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 4.6.2
-
     - name: Cache Packages
       uses: actions/cache@v3
       with:
