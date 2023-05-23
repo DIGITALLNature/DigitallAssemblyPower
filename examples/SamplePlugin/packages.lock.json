@@ -118,10 +118,7 @@
         "contentHash": "okurQJO6NRE/apDIP23ajJ0hpiNmJ+f0BwOlB/cSqTLQlw5upkf+5+96+iG2Jw40G1fCVCyPz/FhIABUjMR+RQ=="
       },
       "dgt.apower": {
-        "type": "Project",
-        "dependencies": {
-          "Microsoft.CrmSdk.CoreAssemblies": "[9.0.2.49, )"
-        }
+        "type": "Project"
       }
     }
   }

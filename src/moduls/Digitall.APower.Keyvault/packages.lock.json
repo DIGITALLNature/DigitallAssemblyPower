@@ -118,16 +118,13 @@
         "contentHash": "okurQJO6NRE/apDIP23ajJ0hpiNmJ+f0BwOlB/cSqTLQlw5upkf+5+96+iG2Jw40G1fCVCyPz/FhIABUjMR+RQ=="
       },
       "dgt.apower": {
-        "type": "Project",
-        "dependencies": {
-          "Microsoft.CrmSdk.CoreAssemblies": "[9.0.2.49, )"
-        }
+        "type": "Project"
       },
       "dgt.apower.enviromentvariables": {
         "type": "Project",
         "dependencies": {
           "Microsoft.CrmSdk.CoreAssemblies": "[9.0.2.49, )",
-          "dgt.apower": "[1.0.0-local, )"
+          "dgt.apower": "[1.0.0-beta.1, )"
         }
       }
     }
