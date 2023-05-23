@@ -10,7 +10,7 @@ It can be integrated into existing plugins, or new plugins can be used based on 
 
 ## ❤️&nbsp; Community and Contributions
 
-The DigitallAssemblyPower is a **community-driven open source project** backed by DIGITALL. We are committed to a fully transparent development process and **highly appreciate any contributions**.
+The DigitallAssemblyPower is a **community-driven open source project** backed by DIGITALL. We are committed to a fully transparent development process and **highly appreciate any contributions**. 
 Whether you are helping us fixing bugs, proposing new feature, improving our documentation or spreading the word - **we would love to have you as part of the DigitallAssemblyPower community**.
 
 ## 📫&nbsp; Have a question? Want to chat? Ran into a problem?
