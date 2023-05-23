@@ -305,7 +305,7 @@ namespace Digitall.APower
 
         #region IServiceProvider given
 
-        public IPluginExecutionContext PluginExecutionContext => (IPluginExecutionContext)_serviceProvider.GetService(typeof(IPluginExecutionContext));
+        public IPluginExecutionContext4 PluginExecutionContext => (IPluginExecutionContext4)_serviceProvider.GetService(typeof(IPluginExecutionContext4));
 
         /// <summary>
         /// </summary>
