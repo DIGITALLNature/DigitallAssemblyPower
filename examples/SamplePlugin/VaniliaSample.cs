@@ -26,6 +26,8 @@ namespace SamplePlugin
                                      $"Correlation Id: {pluginCore.PluginExecutionContext.CorrelationId}, " +
                                      $"Initiating User: {pluginCore.PluginExecutionContext.InitiatingUserId}");
 
+
+            // Add your custom implementation of the plug-in.
             try
             {
                 // Invoke the custom implementation

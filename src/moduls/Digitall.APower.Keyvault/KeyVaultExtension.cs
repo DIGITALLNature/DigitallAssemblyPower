@@ -27,6 +27,7 @@ namespace Digitall.APower.Keyvault
 
         private static HttpClient HttpClient => Lazy.Value;
 
+        public static string KeyVaultSecret(this IPlugin plugin, PluginCore executor, string url) => KeyVaultSecret(executor, url);
         public static string KeyVaultSecret(this Executor executor, string url) => executor.Core.KeyVaultSecret(url);
 
         //GET {vaultBaseUrl}/secrets/{secret-name}/{secret-version}?api-version=7.0

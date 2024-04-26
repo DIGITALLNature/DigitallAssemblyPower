@@ -4,9 +4,9 @@
     ".NETFramework,Version=v4.6.2": {
       "Microsoft.CrmSdk.CoreAssemblies": {
         "type": "Direct",
-        "requested": "[9.0.2.49, )",
-        "resolved": "9.0.2.49",
-        "contentHash": "6G8EHp8BSPjyEhH+R6fs+KJzHyYgGOv3IB4cyC8nB7UyruyAh/QoXiC5P8qThlYUO0NO70ximfPpgtiU4iUbvQ==",
+        "requested": "[9.0.2.52, )",
+        "resolved": "9.0.2.52",
+        "contentHash": "ZGykSTEinxOCERJ1j5mMJnXJ9x9LdSt0JW79bbSCXiRSfA01nEG2HcwWc9XN8f9mMamZ8jTtNM/xAfiPfu6V9Q==",
         "dependencies": {
           "System.Text.Json": "6.0.7"
         }
