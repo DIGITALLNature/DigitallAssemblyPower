@@ -24,6 +24,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shared", "shared", "{21320A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Digitall.APower.Tests", "test\Digitall.APower.Tests\Digitall.APower.Tests.csproj", "{F357D415-3C88-483C-9AA7-C0AD4DAC7ED4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Digitall.APower.Tester", "src\Digitall.APower.Tester\Digitall.APower.Tester.csproj", "{D0782BCD-3957-42EB-8C0F-4BA2ED429C38}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,7 @@ Global
 		{21320AC9-284D-4350-ADC9-B38143D0CEC4} = {B280FD9C-A464-4A36-93C8-45DEB3FC9266}
 		{9BFF8B98-8987-4D8A-B83D-81CE20A16CB0} = {21320AC9-284D-4350-ADC9-B38143D0CEC4}
 		{F357D415-3C88-483C-9AA7-C0AD4DAC7ED4} = {FB6DE501-65DE-4809-A348-A16EB483E5C3}
+		{D0782BCD-3957-42EB-8C0F-4BA2ED429C38} = {539AA368-1B87-4B60-85D7-5EC5B5E09DB0}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{2BBAC871-2287-4544-8C71-DFE6104D1BBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -65,5 +68,9 @@ Global
 		{F357D415-3C88-483C-9AA7-C0AD4DAC7ED4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F357D415-3C88-483C-9AA7-C0AD4DAC7ED4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F357D415-3C88-483C-9AA7-C0AD4DAC7ED4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0782BCD-3957-42EB-8C0F-4BA2ED429C38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0782BCD-3957-42EB-8C0F-4BA2ED429C38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0782BCD-3957-42EB-8C0F-4BA2ED429C38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0782BCD-3957-42EB-8C0F-4BA2ED429C38}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
