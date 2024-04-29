@@ -23,7 +23,7 @@ namespace Digitall.APower
             SecureConfig = secure;
         }
 
-        public PluginCore Core { get; private set; }
+        public virtual PluginCore Core { get; private set; }
 
         /// <summary>
         ///     Get current execution result

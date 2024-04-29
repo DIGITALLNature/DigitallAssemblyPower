@@ -2,6 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.Xrm.Sdk;
 
@@ -64,6 +65,7 @@ namespace Digitall.APower
         /// <returns></returns>
         public static T GetEntityAttributeValue<T>(this PluginCore pluginCore, string attribute)
         {
+            Debug.Assert(pluginCore != null, nameof(pluginCore) + " != null");
             if (pluginCore.Entity != null && pluginCore.Entity.Attributes.Contains(attribute))
             {
                 return (T)pluginCore.Entity.Attributes[attribute];
@@ -83,8 +85,12 @@ namespace Digitall.APower
         /// <param name="pluginCore">self</param>
         /// <param name="attribute">lookup attribute</param>
         /// <returns></returns>
-        public static bool IsEntityAttributeValueNew(this PluginCore pluginCore, string attribute) => pluginCore.Entity != null && pluginCore.Entity.Contains(attribute) &&
-                                                                                                      (pluginCore.PreEntityImage == null || !pluginCore.PreEntityImage.Contains(attribute));
+        public static bool IsEntityAttributeValueNew(this PluginCore pluginCore, string attribute)
+        {
+            Debug.Assert(pluginCore != null, nameof(pluginCore) + " != null");
+            return pluginCore.Entity != null && pluginCore.Entity.Contains(attribute) &&
+                   (pluginCore.PreEntityImage == null || !pluginCore.PreEntityImage.Contains(attribute));
+        }
 
         /// <summary>
         ///     Evaluates if attribute in Entity is set and is different from PreEntityImage
@@ -95,6 +101,8 @@ namespace Digitall.APower
         /// <returns></returns>
         public static bool IsEntityAttributeValueChanged<T>(this PluginCore pluginCore, string attribute)
         {
+            Debug.Assert(pluginCore != null, nameof(pluginCore) + " != null");
+
             //not in target
             if (pluginCore.Entity != null && !pluginCore.Entity.Contains(attribute))
             {
@@ -151,9 +159,12 @@ namespace Digitall.APower
         /// <param name="pluginCore">self</param>
         /// <param name="attribute">lookup attribute</param>
         /// <returns></returns>
-        public static bool IsEntityAttributeValueNullOrEmpty(this PluginCore pluginCore, string attribute) =>
-            pluginCore.Entity != null && (!pluginCore.Entity.Contains(attribute) || pluginCore.Entity[attribute] == null) &&
-            (pluginCore.PreEntityImage == null || !pluginCore.PreEntityImage.Contains(attribute) || pluginCore.PreEntityImage[attribute] == null);
+        public static bool IsEntityAttributeValueNullOrEmpty(this PluginCore pluginCore, string attribute)
+        {
+            Debug.Assert(pluginCore != null, nameof(pluginCore) + " != null");
+            return pluginCore.Entity != null && (!pluginCore.Entity.Contains(attribute) || pluginCore.Entity[attribute] == null) &&
+                   (pluginCore.PreEntityImage == null || !pluginCore.PreEntityImage.Contains(attribute) || pluginCore.PreEntityImage[attribute] == null);
+        }
 
         /// <summary>
         ///     Merge Entity and PreEntityImage
@@ -163,6 +174,7 @@ namespace Digitall.APower
         /// <returns></returns>
         public static T MergeEntity<T>(this PluginCore executor) where T : Entity
         {
+            Debug.Assert(executor != null, nameof(executor) + " != null");
             if (executor.PreEntityImage == null)
             {
                 return executor.Entity.ToEntity<T>();
