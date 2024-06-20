@@ -7,10 +7,18 @@ namespace SamplePlugin
 {
     public class ExecutorSample : Executor
     {
+        /// <summary>
+        /// Executes the main logic of the class.
+        /// </summary>
+        /// <returns>
+        /// The result of the execution.
+        /// </returns>
         protected override ExecutionResult Execute()
         {
+            // Get the ID of the entity
             var entityId = Entity.Id;
 
+            // Return the execution result
             return ExecutionResult.Skipped;
         }
     }

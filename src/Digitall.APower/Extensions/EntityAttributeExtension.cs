@@ -60,20 +60,22 @@ namespace Digitall.APower
         ///     Get value T from entity. Lookup order 1st Entity, 2nd PreEntityImage, 3rd default!
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="pluginCore">self</param>
+        /// <param name="pluginExecutionContext">self</param>
         /// <param name="attribute">lookup attribute</param>
         /// <returns></returns>
-        public static T GetEntityAttributeValue<T>(this PluginCore pluginCore, string attribute)
+        public static T GetEntityAttributeValue<T>(this IPluginExecutionContext pluginExecutionContext, string attribute)
         {
-            Debug.Assert(pluginCore != null, nameof(pluginCore) + " != null");
-            if (pluginCore.Entity != null && pluginCore.Entity.Attributes.Contains(attribute))
+            Debug.Assert(pluginExecutionContext != null, nameof(pluginExecutionContext) + " != null");
+            var entity = pluginExecutionContext.GetTarget<Entity>();
+            if (entity != null && entity.Attributes.Contains(attribute))
             {
-                return (T)pluginCore.Entity.Attributes[attribute];
+                return (T)entity.Attributes[attribute];
             }
 
-            if (pluginCore.PreEntityImage != null && pluginCore.PreEntityImage.Attributes.Contains(attribute))
+            var preImage = pluginExecutionContext.GetPreImage<Entity>();
+            if (preImage != null && preImage.Attributes.Contains(attribute))
             {
-                return (T)pluginCore.PreEntityImage.Attributes[attribute];
+                return (T)preImage.Attributes[attribute];
             }
 
             return default;
@@ -82,35 +84,41 @@ namespace Digitall.APower
         /// <summary>
         ///     Evaluates if Entity contains attribute and PreEntityImage does not
         /// </summary>
-        /// <param name="pluginCore">self</param>
+        /// <param name="pluginExecutionContext">self</param>
         /// <param name="attribute">lookup attribute</param>
         /// <returns></returns>
-        public static bool IsEntityAttributeValueNew(this PluginCore pluginCore, string attribute)
+        public static bool IsEntityAttributeValueNew(this IPluginExecutionContext pluginExecutionContext, string attribute)
         {
-            Debug.Assert(pluginCore != null, nameof(pluginCore) + " != null");
-            return pluginCore.Entity != null && pluginCore.Entity.Contains(attribute) &&
-                   (pluginCore.PreEntityImage == null || !pluginCore.PreEntityImage.Contains(attribute));
+            Debug.Assert(pluginExecutionContext != null, nameof(pluginExecutionContext) + " != null");
+            var entity = pluginExecutionContext.GetTarget<Entity>();
+            var preImage = pluginExecutionContext.GetPreImage<Entity>();
+
+            return entity != null && entity.Contains(attribute) &&
+                   (preImage == null || !preImage.Contains(attribute));
         }
 
         /// <summary>
         ///     Evaluates if attribute in Entity is set and is different from PreEntityImage
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="pluginCore">self</param>
+        /// <param name="pluginExecutionContext">self</param>
         /// <param name="attribute">lookup attribute</param>
         /// <returns></returns>
-        public static bool IsEntityAttributeValueChanged<T>(this PluginCore pluginCore, string attribute)
+        public static bool IsEntityAttributeValueChanged<T>(this IPluginExecutionContext pluginExecutionContext, string attribute)
         {
-            Debug.Assert(pluginCore != null, nameof(pluginCore) + " != null");
+            Debug.Assert(pluginExecutionContext != null, nameof(pluginExecutionContext) + " != null");
+            var entity = pluginExecutionContext.GetTarget<Entity>();
+            var preImage = pluginExecutionContext.GetPreImage<Entity>();
 
+            Debug.Assert(entity != null, nameof(entity) + " != null");
             //not in target
-            if (pluginCore.Entity != null && !pluginCore.Entity.Contains(attribute))
+            if (!entity.Contains(attribute))
             {
                 return false;
             }
 
             //no pre-image
-            if (pluginCore.PreEntityImage == null)
+            if (preImage == null)
             {
                 return true;
             }
@@ -118,7 +126,7 @@ namespace Digitall.APower
             if (typeof(T) != typeof(string))
             {
                 //was empty, stays empty
-                if (!pluginCore.PreEntityImage.Contains(attribute) && pluginCore.Entity[attribute] == null)
+                if (!preImage.Contains(attribute) && entity[attribute] == null)
                 {
                     return false;
                 }
@@ -126,64 +134,59 @@ namespace Digitall.APower
             else
             {
                 //was empty, stays empty
-                if (!pluginCore.PreEntityImage.Contains(attribute) && string.IsNullOrEmpty((string)pluginCore.Entity[attribute]))
+                if (!preImage.Contains(attribute) && string.IsNullOrEmpty((string)entity[attribute]))
                 {
                     return false;
                 }
 
                 //treat null == "" as true
-                if (pluginCore.PreEntityImage.Contains(attribute) && string.IsNullOrEmpty((string)pluginCore.PreEntityImage[attribute]) && string.IsNullOrEmpty((string)pluginCore.Entity[attribute]))
+                if (preImage.Contains(attribute) && string.IsNullOrEmpty((string)preImage[attribute]) && string.IsNullOrEmpty((string)entity[attribute]))
                 {
                     return false;
                 }
             }
 
-            var cacheKey = $"EntityAttributeExtension-{typeof(T).FullName}";
-            IEqualityComparer<T> typeEqualizer;
-            if (pluginCore.CacheService.TryGet(cacheKey, out var value))
-            {
-                typeEqualizer = value as EqualityComparer<T>;
-            }
-            else
-            {
-                typeEqualizer = EqualityComparer<T>.Default;
-                pluginCore.CacheService.SetSliding(cacheKey, typeEqualizer, 1800);
-            }
-
-            return !(pluginCore.PreEntityImage.Contains(attribute) && typeEqualizer.Equals((T)pluginCore.PreEntityImage[attribute], (T)pluginCore.Entity[attribute]));
+            var typeEqualizer = EqualityComparer<T>.Default;
+            return !(preImage.Contains(attribute) && typeEqualizer.Equals((T)preImage[attribute], (T)entity[attribute]));
         }
 
         /// <summary>
         ///     Evaluates if attribute contained in Entity or PreEntityImage and not null.
         /// </summary>
-        /// <param name="pluginCore">self</param>
+        /// <param name="pluginExecutionContext">self</param>
         /// <param name="attribute">lookup attribute</param>
         /// <returns></returns>
-        public static bool IsEntityAttributeValueNullOrEmpty(this PluginCore pluginCore, string attribute)
+        public static bool IsEntityAttributeValueNullOrEmpty(this IPluginExecutionContext pluginExecutionContext, string attribute)
         {
-            Debug.Assert(pluginCore != null, nameof(pluginCore) + " != null");
-            return pluginCore.Entity != null && (!pluginCore.Entity.Contains(attribute) || pluginCore.Entity[attribute] == null) &&
-                   (pluginCore.PreEntityImage == null || !pluginCore.PreEntityImage.Contains(attribute) || pluginCore.PreEntityImage[attribute] == null);
+            Debug.Assert(pluginExecutionContext != null, nameof(pluginExecutionContext) + " != null");
+            var entity = pluginExecutionContext.GetTarget<Entity>();
+            var preImage = pluginExecutionContext.GetPreImage<Entity>();
+
+            return entity != null && (!entity.Contains(attribute) || entity[attribute] == null) &&
+                   (preImage == null || !preImage.Contains(attribute) || preImage[attribute] == null);
         }
 
         /// <summary>
         ///     Merge Entity and PreEntityImage
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="executor">self</param>
+        /// <param name="pluginExecutionContext">self</param>
         /// <returns></returns>
-        public static T MergeEntity<T>(this PluginCore executor) where T : Entity
+        public static T MergeEntity<T>(this IPluginExecutionContext pluginExecutionContext) where T : Entity
         {
-            Debug.Assert(executor != null, nameof(executor) + " != null");
-            if (executor.PreEntityImage == null)
+            Debug.Assert(pluginExecutionContext != null, nameof(pluginExecutionContext) + " != null");
+            var entity = pluginExecutionContext.GetTarget<Entity>();
+            var preImage = pluginExecutionContext.GetPreImage<Entity>();
+
+            if (preImage == null)
             {
-                return executor.Entity.ToEntity<T>();
+                return entity.ToEntity<T>();
             }
 
             var mergedEntity = new Entity
             {
-                Id = executor.PreEntityImage.Id,
-                LogicalName = executor.PreEntityImage.LogicalName
+                Id = preImage.Id,
+                LogicalName = preImage.LogicalName
             };
 
             // return all AttributeLogicalNameAttribute from the given type
@@ -194,20 +197,20 @@ namespace Digitall.APower
 
             foreach (var attribute in attributes)
             {
-                if (executor.Entity.Contains(attribute.LogicalName))
+                if (entity.Contains(attribute.LogicalName))
                 {
-                    mergedEntity[attribute.LogicalName] = executor.Entity[attribute.LogicalName];
-                    if (executor.Entity.FormattedValues.ContainsKey(attribute.LogicalName))
+                    mergedEntity[attribute.LogicalName] = entity[attribute.LogicalName];
+                    if (entity.FormattedValues.ContainsKey(attribute.LogicalName))
                     {
-                        mergedEntity.FormattedValues.Add(attribute.LogicalName, executor.Entity.FormattedValues[attribute.LogicalName]);
+                        mergedEntity.FormattedValues.Add(attribute.LogicalName, entity.FormattedValues[attribute.LogicalName]);
                     }
                 }
-                else if (executor.PreEntityImage.Contains(attribute.LogicalName))
+                else if (preImage.Contains(attribute.LogicalName))
                 {
-                    mergedEntity[attribute.LogicalName] = executor.PreEntityImage[attribute.LogicalName];
-                    if (executor.PreEntityImage.FormattedValues.ContainsKey(attribute.LogicalName))
+                    mergedEntity[attribute.LogicalName] = preImage[attribute.LogicalName];
+                    if (preImage.FormattedValues.ContainsKey(attribute.LogicalName))
                     {
-                        mergedEntity.FormattedValues.Add(attribute.LogicalName, executor.PreEntityImage.FormattedValues[attribute.LogicalName]);
+                        mergedEntity.FormattedValues.Add(attribute.LogicalName, preImage.FormattedValues[attribute.LogicalName]);
                     }
                 }
             }

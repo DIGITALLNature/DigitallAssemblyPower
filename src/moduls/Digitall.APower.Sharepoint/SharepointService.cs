@@ -6,7 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using Dgt.APower.Http;
+using Digitall.APower.Shared;
 using Digitall.APower.Sharepoint.Contracts;
 using Digitall.APower.Sharepoint.Contracts.SharePoint;
 
@@ -28,12 +28,12 @@ namespace Digitall.APower.Sharepoint
             return client;
         });
 
-        private readonly PluginCore _executor;
+        private readonly IServiceProvider _serviceProvider;
         private Func<string> _accessToken;
 
         private string _sharePointUrl;
 
-        public SharepointService(PluginCore executor) => _executor = executor;
+        public SharepointService(IServiceProvider serviceProvider) => _serviceProvider = serviceProvider;
 
         private static HttpClient HttpClient => Lazy.Value;
 
@@ -65,7 +65,7 @@ namespace Digitall.APower.Sharepoint
         public bool GetBinaryByServerRelativePath(string relativePath, out SharepointResponse response)
         {
             const string url = "_api/web/getfilebyserverrelativeurl({0})/$value";
-            _executor.TracingService.Trace(string.Format(CultureInfo.InvariantCulture, url, $"'{relativePath}'"));
+            _serviceProvider.GetTracingService().Trace(string.Format(CultureInfo.InvariantCulture, url, $"'{relativePath}'"));
             var request = GetRequest(HttpMethod.Get, new Uri(_sharePointUrl + string.Format(CultureInfo.InvariantCulture, url, HttpUtils.UrlEncode($"'{relativePath}'"))), _accessToken.Invoke());
             var result = HttpClient.SendAsync(request).ConfigureAwait(false).GetAwaiter().GetResult();
             using (request)
@@ -80,7 +80,7 @@ namespace Digitall.APower.Sharepoint
         public bool GetFileByServerRelativePath(string relativePath, out SharepointResponse response)
         {
             const string url = "_api/Web/getfilebyserverrelativeurl({0})/ListItemAllFields";
-            _executor.TracingService.Trace(string.Format(CultureInfo.InvariantCulture, url, $"'{relativePath}'"));
+            _serviceProvider.GetTracingService().Trace(string.Format(CultureInfo.InvariantCulture, url, $"'{relativePath}'"));
             var request = GetRequest(HttpMethod.Get, new Uri(_sharePointUrl + string.Format(CultureInfo.InvariantCulture, url, HttpUtils.UrlEncode($"'{relativePath}'"))), _accessToken.Invoke());
             var result = HttpClient.SendAsync(request).ConfigureAwait(false).GetAwaiter().GetResult();
             using (request)
@@ -101,12 +101,12 @@ namespace Digitall.APower.Sharepoint
             var filterUrl = "";
             if (!string.IsNullOrWhiteSpace(filter))
             {
-                _executor.TracingService.Trace(string.Format(CultureInfo.InvariantCulture, url, $"'{relativePath}'") + $"?$filter={filter}");
+                _serviceProvider.GetTracingService().Trace(string.Format(CultureInfo.InvariantCulture, url, $"'{relativePath}'") + $"?$filter={filter}");
                 filterUrl = $"?$filter={HttpUtils.UrlEncode(filter)}";
             }
             else
             {
-                _executor.TracingService.Trace(string.Format(CultureInfo.InvariantCulture, url, $"'{relativePath}'"));
+                _serviceProvider.GetTracingService().Trace(string.Format(CultureInfo.InvariantCulture, url, $"'{relativePath}'"));
             }
 
             var request = GetRequest(HttpMethod.Get, new Uri(_sharePointUrl + string.Format(CultureInfo.InvariantCulture, url, HttpUtils.UrlEncode($"'{relativePath}'")) + filterUrl), _accessToken.Invoke());
@@ -123,7 +123,7 @@ namespace Digitall.APower.Sharepoint
         public bool CheckFolderByServerRelativePath(string relativePath, out SharepointResponse response)
         {
             const string url = "_api/Web/GetFolderByServerRelativePath(decodedurl={0})/ListItemAllFields";
-            _executor.TracingService.Trace(string.Format(CultureInfo.InvariantCulture, url, $"'{relativePath}'"));
+            _serviceProvider.GetTracingService().Trace(string.Format(CultureInfo.InvariantCulture, url, $"'{relativePath}'"));
             var request = GetRequest(HttpMethod.Get, new Uri(_sharePointUrl + string.Format(CultureInfo.InvariantCulture, url, HttpUtils.UrlEncode($"'{relativePath}'"))), _accessToken.Invoke());
             var result = HttpClient.SendAsync(request).ConfigureAwait(false).GetAwaiter().GetResult();
             using (request)
@@ -138,7 +138,7 @@ namespace Digitall.APower.Sharepoint
         public bool CreateFolderByServerRelativePath(string relativePath, string digest, out SharepointResponse response)
         {
             const string url = "_api/Web/Folders/add({0})";
-            _executor.TracingService.Trace(string.Format(CultureInfo.InvariantCulture, url, $"'{relativePath}'"));
+            _serviceProvider.GetTracingService().Trace(string.Format(CultureInfo.InvariantCulture, url, $"'{relativePath}'"));
             var request = GetRequest(HttpMethod.Post, new Uri(_sharePointUrl + string.Format(CultureInfo.InvariantCulture, url, HttpUtils.UrlEncode($"'{relativePath}'"))), _accessToken.Invoke());
             request.Headers.Add(HttpUtils.XRequestDigest, digest);
             request.Content = new StringContent("");
@@ -158,7 +158,7 @@ namespace Digitall.APower.Sharepoint
         public bool GetSharePointFolderId(string relativePath, out SharepointResponse response)
         {
             const string url = "_api/Web/GetFolderByServerRelativePath(decodedurl={0})/ListItemAllFields/Id";
-            _executor.TracingService.Trace(string.Format(CultureInfo.InvariantCulture, url, $"'{relativePath}'"));
+            _serviceProvider.GetTracingService().Trace(string.Format(CultureInfo.InvariantCulture, url, $"'{relativePath}'"));
             var request = GetRequest(HttpMethod.Get, new Uri(_sharePointUrl + string.Format(CultureInfo.InvariantCulture, url, HttpUtils.UrlEncode($"'{relativePath}'"))), _accessToken.Invoke());
             var result = HttpClient.SendAsync(request).ConfigureAwait(false).GetAwaiter().GetResult();
             using (request)
@@ -173,7 +173,7 @@ namespace Digitall.APower.Sharepoint
         public bool GetListTypeName(string title, out SharepointResponse response)
         {
             const string url = "_api/web/lists/GetByTitle({0})?$select=ListItemEntityTypeFullName";
-            _executor.TracingService.Trace(string.Format(CultureInfo.InvariantCulture, url, $"'{title}'"));
+            _serviceProvider.GetTracingService().Trace(string.Format(CultureInfo.InvariantCulture, url, $"'{title}'"));
             var request = GetRequest(HttpMethod.Get, new Uri(_sharePointUrl + string.Format(CultureInfo.InvariantCulture, url, HttpUtils.UrlEncode($"'{title}'"))), _accessToken.Invoke());
             var result = HttpClient.SendAsync(request).ConfigureAwait(false).GetAwaiter().GetResult();
             using (request)
@@ -188,7 +188,7 @@ namespace Digitall.APower.Sharepoint
         public bool UpdateSharePointItem(string title, int itemId, string listItemEntityTypeFullName, string columnName, string columnValue, string digest, out SharepointResponse response)
         {
             const string url = "_api/web/lists/GetByTitle({0})/items({1})";
-            _executor.TracingService.Trace(string.Format(CultureInfo.InvariantCulture, url, $"'{title}'", itemId));
+            _serviceProvider.GetTracingService().Trace(string.Format(CultureInfo.InvariantCulture, url, $"'{title}'", itemId));
             var request = GetRequest(HttpMethod.Post, new Uri(_sharePointUrl + string.Format(CultureInfo.InvariantCulture, url, HttpUtils.UrlEncode($"'{title}'"), itemId)), _accessToken.Invoke());
             request.Headers.Add(HttpUtils.XRequestDigest, digest);
             request.Headers.Add("X-HTTP-Method", "MERGE");
@@ -211,7 +211,7 @@ namespace Digitall.APower.Sharepoint
         public bool BreakRoleInheritance(string title, int itemId, string digest, out SharepointResponse response)
         {
             const string url = "_api/web/lists/GetByTitle({0})/items({1})/breakroleinheritance(copyRoleAssignments=false,clearSubscopes=false)";
-            _executor.TracingService.Trace(string.Format(CultureInfo.InvariantCulture, url, $"'{title}'", itemId));
+            _serviceProvider.GetTracingService().Trace(string.Format(CultureInfo.InvariantCulture, url, $"'{title}'", itemId));
             var request = GetRequest(HttpMethod.Post, new Uri(_sharePointUrl + string.Format(CultureInfo.InvariantCulture, url, HttpUtils.UrlEncode($"'{title}'"), itemId)), _accessToken.Invoke());
             request.Headers.Add(HttpUtils.XRequestDigest, digest);
             request.Content = new StringContent("");
@@ -238,7 +238,7 @@ namespace Digitall.APower.Sharepoint
             //          i:05:t| adfs with roles| user@domain.com
             const string url = "_api/web/siteusers(@v)?@v={0}";
             var spUser = $"'i:0#.f|membership|{user}'";
-            _executor.TracingService.Trace(string.Format(CultureInfo.InvariantCulture, url, spUser));
+            _serviceProvider.GetTracingService().Trace(string.Format(CultureInfo.InvariantCulture, url, spUser));
             var request = GetRequest(HttpMethod.Get, new Uri(_sharePointUrl + string.Format(CultureInfo.InvariantCulture, url, HttpUtils.UrlEncode(spUser))), _accessToken.Invoke());
             var result = HttpClient.SendAsync(request).ConfigureAwait(false).GetAwaiter().GetResult();
             using (request)
@@ -260,7 +260,7 @@ namespace Digitall.APower.Sharepoint
             //          i:05:t| adfs with roles| user@domain.com
             const string url = "_api/web/ensureuser";
             var spUser = $"i:0#.f|membership|{user}";
-            _executor.TracingService.Trace("{0}", url + ", Payload:" + spUser);
+            _serviceProvider.GetTracingService().Trace("{0}", url + ", Payload:" + spUser);
             var request = GetRequest(HttpMethod.Post, new Uri(_sharePointUrl + url), _accessToken.Invoke());
             request.Headers.Add(HttpUtils.XRequestDigest, digest);
             var content = $"{{ 'logonName': '{spUser}'}}";
@@ -281,7 +281,7 @@ namespace Digitall.APower.Sharepoint
         public bool GetSiteGroup(string group, out SharepointResponse response)
         {
             const string url = "_api/web/sitegroups/getbyname({0})";
-            _executor.TracingService.Trace(string.Format(CultureInfo.InvariantCulture, url, $"'{group}'"));
+            _serviceProvider.GetTracingService().Trace(string.Format(CultureInfo.InvariantCulture, url, $"'{group}'"));
             var request = GetRequest(HttpMethod.Get, new Uri(_sharePointUrl + string.Format(CultureInfo.InvariantCulture, url, HttpUtils.UrlEncode($"'{group}'"))), _accessToken.Invoke());
             var result = HttpClient.SendAsync(request).ConfigureAwait(false).GetAwaiter().GetResult();
             using (request)
@@ -296,7 +296,7 @@ namespace Digitall.APower.Sharepoint
         public bool GetRoleDefinition(string roleDefinition, out SharepointResponse response)
         {
             const string url = "_api/web/roledefinitions/getbyname({0})";
-            _executor.TracingService.Trace(string.Format(CultureInfo.InvariantCulture, url, $"'{roleDefinition}'"));
+            _serviceProvider.GetTracingService().Trace(string.Format(CultureInfo.InvariantCulture, url, $"'{roleDefinition}'"));
             var request = GetRequest(HttpMethod.Get, new Uri(_sharePointUrl + string.Format(CultureInfo.InvariantCulture, url, HttpUtils.UrlEncode($"'{roleDefinition}'"))), _accessToken.Invoke());
             var result = HttpClient.SendAsync(request).ConfigureAwait(false).GetAwaiter().GetResult();
             using (request)
@@ -311,7 +311,7 @@ namespace Digitall.APower.Sharepoint
         public bool RoleAssignment(string title, int itemId, int principalId, int roleDefId, string digest, out SharepointResponse response)
         {
             const string url = "_api/web/lists/GetByTitle({0})/items({1})/roleassignments/addroleassignment(principalid={2},roleDefId={3})";
-            _executor.TracingService.Trace("{0}", string.Format(CultureInfo.InvariantCulture, url, $"'{title}'", itemId, principalId, roleDefId));
+            _serviceProvider.GetTracingService().Trace("{0}", string.Format(CultureInfo.InvariantCulture, url, $"'{title}'", itemId, principalId, roleDefId));
             var request = GetRequest(HttpMethod.Post, new Uri(_sharePointUrl + string.Format(CultureInfo.InvariantCulture, url, HttpUtils.UrlEncode($"'{title}'"), itemId, principalId, roleDefId)), _accessToken.Invoke());
             request.Headers.Add(HttpUtils.XRequestDigest, digest);
             request.Content = new StringContent("");
@@ -331,7 +331,7 @@ namespace Digitall.APower.Sharepoint
         public bool UploadFileByServerRelativePath(string relativePath, string fileName, ByteArrayContent fileContent, string digest, out SharepointResponse response, bool overwrite = true)
         {
             const string url = "_api/web/GetFolderByServerRelativeUrl({0})/Files/add(url={1}, overwrite={2})";
-            _executor.TracingService.Trace("{0}", string.Format(CultureInfo.InvariantCulture, url, $"'{relativePath}'", $"'{fileName}'", overwrite.ToString().ToLower(CultureInfo.InvariantCulture)));
+            _serviceProvider.GetTracingService().Trace("{0}", string.Format(CultureInfo.InvariantCulture, url, $"'{relativePath}'", $"'{fileName}'", overwrite.ToString().ToLower(CultureInfo.InvariantCulture)));
             var request = GetRequest(HttpMethod.Post,
                 new Uri(_sharePointUrl + string.Format(CultureInfo.InvariantCulture, url, HttpUtils.UrlEncode($"'{relativePath}'"), HttpUtils.UrlEncode($"'{fileName}'"), overwrite.ToString().ToLower(CultureInfo.InvariantCulture))), _accessToken.Invoke());
             request.Content = fileContent;
@@ -360,7 +360,7 @@ namespace Digitall.APower.Sharepoint
         private SharepointResponse GetResponse<T>(HttpResponseMessage response) where T : ISharepointPayload
         {
             var json = response.Content.ReadAsStringAsync().Result;
-            _executor.TracingService.Trace(json);
+            _serviceProvider.GetTracingService().Trace(json);
             SharepointResponse result;
             switch (response.StatusCode)
             {
@@ -368,7 +368,7 @@ namespace Digitall.APower.Sharepoint
                     result = new SharepointResponse
                     {
                         StatusCode = (int)response.StatusCode,
-                        Payload = _executor.SerializerService.JsonDeserialize<T>(json)
+                        Payload = _serviceProvider.GetSerializerService().JsonDeserialize<T>(json)
                     };
                     break;
                 case HttpStatusCode.NoContent:
@@ -385,7 +385,7 @@ namespace Digitall.APower.Sharepoint
                             result = new SharepointResponse
                             {
                                 StatusCode = (int)response.StatusCode,
-                                Payload = _executor.SerializerService.JsonDeserialize<ErrorResponse>(json)
+                                Payload = _serviceProvider.GetSerializerService().JsonDeserialize<ErrorResponse>(json)
                             };
                         }
                         else
@@ -393,7 +393,7 @@ namespace Digitall.APower.Sharepoint
                             result = new SharepointResponse
                             {
                                 StatusCode = (int)response.StatusCode,
-                                Payload = _executor.SerializerService.JsonDeserialize<BadRequestResponse>(json)
+                                Payload = _serviceProvider.GetSerializerService().JsonDeserialize<BadRequestResponse>(json)
                             };
                         }
 
@@ -406,7 +406,7 @@ namespace Digitall.APower.Sharepoint
                             result = new SharepointResponse
                             {
                                 StatusCode = (int)response.StatusCode,
-                                Payload = _executor.SerializerService.JsonDeserialize<ErrorResponse>(json)
+                                Payload = _serviceProvider.GetSerializerService().JsonDeserialize<ErrorResponse>(json)
                             };
                         }
                         else if (!string.IsNullOrEmpty(json) && (json.StartsWith("<!DOCTYPE html",StringComparison.Ordinal) || json.StartsWith("<?xml",StringComparison.Ordinal))) //html/xml returned, nasty but true
@@ -427,7 +427,7 @@ namespace Digitall.APower.Sharepoint
                                 StatusCode = (int)response.StatusCode,
                                 Payload = new UnknownResponse
                                 {
-                                    Content = _executor.SerializerService.JsonDeserialize<Dictionary<string, object>>(json)
+                                    Content = _serviceProvider.GetSerializerService().JsonDeserialize<Dictionary<string, object>>(json)
                                 }
                             };
                         }
@@ -465,7 +465,7 @@ namespace Digitall.APower.Sharepoint
                                 StatusCode = (int)response.StatusCode,
                                 Payload = new UnknownResponse
                                 {
-                                    Content = _executor.SerializerService.JsonDeserialize<Dictionary<string, object>>(json)
+                                    Content = _serviceProvider.GetSerializerService().JsonDeserialize<Dictionary<string, object>>(json)
                                 }
                             };
                         }
@@ -486,7 +486,7 @@ namespace Digitall.APower.Sharepoint
                 response.Content.CopyToAsync(stream);
                 stream.Position = 0;
 
-                _executor.TracingService.Trace("Data retrieved.");
+                _serviceProvider.GetTracingService().Trace("Data retrieved.");
 
                 var answer = new SharepointResponse
                 {

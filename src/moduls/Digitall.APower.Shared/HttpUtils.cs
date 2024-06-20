@@ -1,8 +1,8 @@
 ﻿using System.Text;
 
-namespace Dgt.APower.Http
+namespace Digitall.APower.Shared
 {
-    internal class HttpUtils
+    internal sealed class HttpUtils
     {
         public const string Utf8 = "utf-8";
         public const string ApplicationJson = "application/json";

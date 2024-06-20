@@ -10,7 +10,7 @@ using dgt.apower.http.Contract;
 using Digitall.APower;
 using Microsoft.Xrm.Sdk;
 
-namespace Dgt.APower.Http
+namespace Digitall.APower.Shared
 {
     //https://docs.microsoft.com/en-us/previous-versions/azure/dn645543(v=azure.100)
     public static class AuthenticationExtension
@@ -32,10 +32,10 @@ namespace Dgt.APower.Http
         private static HttpClient HttpClient => Lazy.Value;
 
         public static AccessControlAccessToken GetAccessControlAccessToken(this Executor executor, string tenantId, string resource, string clientId, string clientSecret) =>
-            executor.Core.GetAccessControlAccessToken(tenantId, resource, clientId, clientSecret);
+            executor.ServiceProvider.GetAccessControlAccessToken(tenantId, resource, clientId, clientSecret);
 
         //https://accounts.accesscontrol.windows.net/<realm>/tokens/OAuth/2
-        public static AccessControlAccessToken GetAccessControlAccessToken(this PluginCore pluginCore, string tenantId, string resource, string clientId, string clientSecret)
+        public static AccessControlAccessToken GetAccessControlAccessToken(this IServiceProvider serviceProvider, string tenantId, string resource, string clientId, string clientSecret)
         {
             const string requestBody = "grant_type=client_credentials&resource={0}&client_id={1}&client_secret={2}";
             var content = string.Format(CultureInfo.InvariantCulture, requestBody, HttpUtils.UrlEncode(resource), HttpUtils.UrlEncode(clientId), HttpUtils.UrlEncode(clientSecret));
@@ -55,17 +55,17 @@ namespace Dgt.APower.Http
                     throw new InvalidPluginExecutionException($"Status {response.StatusCode}: {json}");
                 }
 
-                var accessToken = pluginCore.SerializerService.JsonDeserialize<AccessControlAccessToken>(json);
+                var accessToken = serviceProvider.GetSerializerService().JsonDeserialize<AccessControlAccessToken>(json);
                 return accessToken;
             }
         }
 
 
         public static MicrosoftOnlineAccessToken GetMicrosoftOnlineAccessToken(this Executor executor, string tenantId, string resource, string clientId, string clientSecret) =>
-            executor.Core.GetMicrosoftOnlineAccessToken(tenantId, resource, clientId, clientSecret);
+            executor.ServiceProvider.GetMicrosoftOnlineAccessToken(tenantId, resource, clientId, clientSecret);
 
         //https://login.microsoftonline.com/<tenant id>/oauth2/token
-        public static MicrosoftOnlineAccessToken GetMicrosoftOnlineAccessToken(this PluginCore pluginCore, string tenantId, string resource, string clientId, string clientSecret)
+        public static MicrosoftOnlineAccessToken GetMicrosoftOnlineAccessToken(this IServiceProvider serviceProvider, string tenantId, string resource, string clientId, string clientSecret)
         {
             const string requestBody = "grant_type=client_credentials&resource={0}&client_id={1}&client_secret={2}";
             var content = string.Format(CultureInfo.InvariantCulture,requestBody, HttpUtils.UrlEncode(resource), HttpUtils.UrlEncode(clientId), HttpUtils.UrlEncode(clientSecret));
@@ -85,7 +85,7 @@ namespace Dgt.APower.Http
                     throw new InvalidPluginExecutionException($"Status {response.StatusCode}: {json}");
                 }
 
-                var accessToken = pluginCore.SerializerService.JsonDeserialize<MicrosoftOnlineAccessToken>(json);
+                var accessToken = serviceProvider.GetSerializerService().JsonDeserialize<MicrosoftOnlineAccessToken>(json);
                 return accessToken;
             }
         }

@@ -23,8 +23,6 @@ namespace Digitall.APower
             SecureConfig = secure;
         }
 
-        public virtual PluginCore Core { get; private set; }
-
         /// <summary>
         ///     Get current execution result
         /// </summary>
@@ -39,7 +37,7 @@ namespace Digitall.APower
             var timer = Stopwatch.StartNew();
             //follow the "stateless" recommendation of Microsoft
             var inner = (Executor)MemberwiseClone();
-            inner.Core = new PluginCore(serviceProvider);
+            inner.ServiceProvider = serviceProvider;
             try
             {
                 inner.Result = inner.Execute();
@@ -60,7 +58,7 @@ namespace Digitall.APower
 
                 throw;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 inner.Result = ExecutionResult.Failure;
                 throw;
@@ -69,6 +67,10 @@ namespace Digitall.APower
             //for unit testing only
             Result = inner.Result;
         }
+
+        public IServiceProvider ServiceProvider { get; set; }
+
+        public IPluginExecutionContext Core => ServiceProvider.GetExecutionContext();
 
         /// <summary>
         ///     Abstract implementation for the Plugin. The custom code goes here!
@@ -83,14 +85,14 @@ namespace Digitall.APower
         /// </summary>
         /// <param name="elevated"></param>
         /// <returns></returns>
-        public IOrganizationService OrganizationService(bool elevated = false) => Core.OrganizationService(elevated);
+        public IOrganizationService OrganizationService(bool elevated = false) => elevated ? ServiceProvider.GetElevatedOrganizationService() : ServiceProvider.GetOrganizationService();
 
         /// <summary>
         ///     Invokes the OrganizationServiceFactory; prefer to use the SecuredOrganizationService
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public IOrganizationService OrganizationService(Guid userId) => Core.OrganizationService(userId);
+        public IOrganizationService OrganizationService(Guid userId) => ServiceProvider.GetOrganizationService(userId);
 
 
         /// <summary>
@@ -101,7 +103,7 @@ namespace Digitall.APower
         /// <summary>
         ///     The execution context initiating user id (OrganizationServiceProxy.CallerId).
         /// </summary>
-        public Guid CallerId => Core.CallerId;
+        public Guid CallerId => Core.InitiatingUserId;
 
         /// <summary>
         ///     The business unit that the user making the request, also known as the calling user.
@@ -111,28 +113,28 @@ namespace Digitall.APower
         /// <summary>
         ///     String representation of the currenty executed process.
         /// </summary>
-        public string ProcessName => Core.ProcessName;
+        public string ProcessName => $"CRM.{GetType().Name}.{Core.MessageName}.{Mode}.{Stage}.{Depth}";
 
 
         /// <summary>
         ///     The target entity of the context.
         /// </summary>
-        public Entity Entity => Core.Entity;
+        public Entity Entity => Core.GetTarget<Entity>();
 
         /// <summary>
         ///     The target entity reference of the context.
         /// </summary>
-        public EntityReference EntityReference => Core.EntityReference;
+        public EntityReference EntityReference => Core.GetTarget();
 
         /// <summary>
         ///     The relationship of the context.
         /// </summary>
-        public Relationship Relationship => Core.Relationship;
+        public Relationship Relationship => Core.GetRelationship();
 
         /// <summary>
         ///     The related entities of the context.
         /// </summary>
-        public EntityReferenceCollection RelatedEntities => Core.RelatedEntities;
+        public EntityReferenceCollection RelatedEntities => Core.GetRelatedEntities();
 
         /// <summary>
         ///     Get the execution context depth.
@@ -142,23 +144,23 @@ namespace Digitall.APower
         /// <summary>
         ///     Get the execution context stage as string representation
         /// </summary>
-        public string Stage => Core.Stage;
+        public string Stage => Core.GetFormattedExecutionStage();
 
         /// <summary>
         ///     Get the execution context mode as string representation
         /// </summary>
-        public string Mode => Core.Mode;
+        public string Mode => Core.GetFormattedExecutionMode();
 
 
         /// <summary>
         ///     Context bounded OrganizationService (secured)
         /// </summary>
-        public IOrganizationService SecuredOrganizationService => Core.SecuredOrganizationService;
+        public IOrganizationService SecuredOrganizationService => ServiceProvider.GetOrganizationService();
 
         /// <summary>
         ///     Context bounded OrganizationService (elevated)
         /// </summary>
-        public IOrganizationService ElevatedOrganizationService => Core.ElevatedOrganizationService;
+        public IOrganizationService ElevatedOrganizationService => ServiceProvider.GetElevatedOrganizationService();
 
         /// <summary>
         ///     Generic getter for input parameters in execution context.
@@ -166,10 +168,8 @@ namespace Digitall.APower
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
         /// <param name="value"></param>
-        /// <param name="dafaultValue"></param>
         /// <returns></returns>
-        public bool GetInputParameter<T>(string key, out T value, T dafaultValue = default) =>
-            Core.GetInputParameter(key, out value, dafaultValue);
+        public bool GetInputParameter<T>(string key, out T value) => Core.GetInputParameter(key, out value);
 
         /// <summary>
         ///     Generic getter for output parameters in execution context.
@@ -177,10 +177,8 @@ namespace Digitall.APower
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
         /// <param name="value"></param>
-        /// <param name="dafaultValue"></param>
         /// <returns></returns>
-        public bool GetOutputParameter<T>(string key, out T value, T dafaultValue = default) =>
-            Core.GetOutputParameter(key, out value, dafaultValue);
+        public bool GetOutputParameter<T>(string key, out T value) => Core.GetOutputParameter(key, out value);
 
         /// <summary>
         ///     Generic setter for output parameters in execution context.
@@ -193,49 +191,44 @@ namespace Digitall.APower
         /// <summary>
         ///     The "PreImage" pre-entity image; see Plugin Registration
         /// </summary>
-        public Entity PreEntityImage => Core.PreEntityImage;
+        public Entity PreEntityImage => Core.GetPreImage<Entity>();
 
         /// <summary>
         ///     The "PostImage" post-entity image; see Plugin Registration
         /// </summary>
-        public Entity PostEntityImage => Core.PostEntityImage;
+        public Entity PostEntityImage => Core.GetPostImage<Entity>();
 
         /// <summary>
         ///     Get column set from execution context.
         /// </summary>
-        public ColumnSet ColumnSet => Core.ColumnSet;
+        public ColumnSet ColumnSet => Core.GetColumnSet();
 
         /// <summary>
         ///     Get query from execution context.
         /// </summary>
-        public bool Query(out QueryExpression query, out ColumnSet columnSet) =>
-            Core.Query(out query, out columnSet);
+        public bool Query(out QueryExpression query, out ColumnSet columnSet) => Core.GetQuery(out query, out columnSet);
 
         /// <summary>
         ///     Get query from execution context.
         /// </summary>
-        public bool Query(out QueryByAttribute query, out ColumnSet columnSet) =>
-            Core.Query(out query, out columnSet);
+        public bool Query(out QueryByAttribute query, out ColumnSet columnSet) => Core.GetQuery(out query, out columnSet);
 
         /// <summary>
         ///     Get query from execution context.
         /// </summary>
-        public bool Query(out FetchExpression query, out ColumnSet columnSet) =>
-            Core.Query(out query, out columnSet);
+        public bool Query(out FetchExpression query, out ColumnSet columnSet) => Core.GetQuery(out query, out columnSet);
 
 
         /// <summary>
         ///     Get the business entity from output parameters in execution context.
         /// </summary>
-        public Entity RetrieveEntity => Core.RetrieveEntity;
+        public Entity RetrieveEntity => Core.GetRetrieveEntity();
 
 
         /// <summary>
         ///     Get the business entity collection from output parameters in execution context.
         /// </summary>
-        public EntityCollection RetrieveMultipleEntities => Core.RetrieveMultipleEntities;
-
-        public void Trace(string format, params object[] arg) => Core.Trace(format, arg);
+        public EntityCollection RetrieveMultipleEntities => Core.GetRetrieveMultipleEntities();
 
         #endregion
     }

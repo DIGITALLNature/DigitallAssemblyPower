@@ -10,14 +10,14 @@ namespace Digitall.APower.Tester
     /// <summary>
     /// Represents the context for a plugin execution test.
     /// </summary>
-    public sealed class PluginExecutionTestContext
+    public sealed class PluginExecutionTestContext<TEntity> where TEntity: Entity, new()
     {
         private readonly IPluginExecutionContext5 _plugincontext;
 
         /// <summary>
         /// Gets or sets the target entity.
         /// </summary>
-        public Entity Target { get; } = new Entity("unittest");
+        public TEntity Target { get; } = new TEntity();
 
         /// <summary>
         /// Gets or sets the target entity reference.
@@ -32,12 +32,12 @@ namespace Digitall.APower.Tester
         /// <summary>
         /// Gets or sets the pre-image entity.
         /// </summary>
-        public Entity PreImage { get; } = new Entity("unittest");
+        public TEntity PreImage { get; } = new TEntity();
 
         /// <summary>
         /// Gets or sets the post-image entity.
         /// </summary>
-        public Entity Postimage { get; } = new Entity("unittest");
+        public TEntity Postimage { get; } = new TEntity();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PluginExecutionTestContext"/> class.
