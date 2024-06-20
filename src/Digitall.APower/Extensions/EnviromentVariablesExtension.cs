@@ -2,7 +2,7 @@
 using System.Linq;
 using Microsoft.Xrm.Sdk.Query;
 
-namespace Digitall.APower.EnvironmentVariables
+namespace Digitall.APower
 {
     public static class EnvironmentVariablesExtension
     {
