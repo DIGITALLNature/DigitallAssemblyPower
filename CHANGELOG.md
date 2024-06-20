@@ -1,3 +1,10 @@
+# [1.1.0-beta.2](https://github.com/DIGITALLNature/DigitallAssemblyPower/compare/v1.1.0-beta.1...v1.1.0-beta.2) (2024-06-20)
+
+
+### Features
+
+* union all moduls ([3222ee6](https://github.com/DIGITALLNature/DigitallAssemblyPower/commit/3222ee677ea297f9dc87d3b44fec77700daed2b7))
+
 # [1.1.0-beta.1](https://github.com/DIGITALLNature/DigitallAssemblyPower/compare/v1.0.1-beta.1...v1.1.0-beta.1) (2023-05-23)
 
 
