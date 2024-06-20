@@ -34,7 +34,6 @@ namespace Digitall.APower
         /// <param name="serviceProvider"></param>
         public void Execute(IServiceProvider serviceProvider)
         {
-            var timer = Stopwatch.StartNew();
             //follow the "stateless" recommendation of Microsoft
             var inner = (Executor)MemberwiseClone();
             inner.ServiceProvider = serviceProvider;

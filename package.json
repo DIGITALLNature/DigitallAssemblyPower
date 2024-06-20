@@ -62,7 +62,8 @@
         ],
         "includeSymbols": true,
         "projectPath": [
-            "src/Digitall.APower/Digitall.APower.csproj"
+            "src/Digitall.APower/Digitall.APower.csproj",
+            "test/Digitall.APower.Tests/Digitall.APower.Tests.csproj"
           ],
         "npmPublish": false,
         "usePackageVersion": true

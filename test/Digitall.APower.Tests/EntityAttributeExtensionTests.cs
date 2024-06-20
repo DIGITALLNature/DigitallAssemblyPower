@@ -6,7 +6,6 @@ using dgt.Model.Dataverse;
 using Digitall.APower.Tester;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Extensions;
 using NSubstitute;
 
 namespace Digitall.APower.Tests
