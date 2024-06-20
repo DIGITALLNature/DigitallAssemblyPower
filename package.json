@@ -62,10 +62,7 @@
         ],
         "includeSymbols": true,
         "projectPath": [
-            "src/Digitall.APower/Digitall.APower.csproj",
-            "src/moduls/Digitall.APower.EnvironmentVariables/Digitall.APower.EnvironmentVariables.csproj",
-            "src/moduls/Digitall.APower.Keyvault/Digitall.APower.Keyvault.csproj",
-            "src/moduls/Digitall.APower.Sharepoint/Digitall.APower.Sharepoint.csproj"
+            "src/Digitall.APower/Digitall.APower.csproj"
           ],
         "npmPublish": false,
         "usePackageVersion": true
