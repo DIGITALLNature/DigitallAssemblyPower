@@ -3,12 +3,19 @@
 
 using System;
 using System.Diagnostics;
+using Digitall.APower.Contracts;
+using Digitall.APower.Services;
 using Microsoft.Xrm.Sdk;
 
 namespace Digitall.APower
 {
     public abstract class PluginSkeleton : IPlugin
     {
+        /// <summary>
+        /// Encapsulates access to DateTime to facilitate testing of date-dependent code
+        /// </summary>
+        public IDateTimeProvider DateTimeProvider { get; set; } = new SystemDateTimeProvider();
+
         /// <summary>
         /// Executes the plugin using the provided service provider.
         /// </summary>

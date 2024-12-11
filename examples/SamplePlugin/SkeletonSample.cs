@@ -55,6 +55,11 @@ namespace SamplePlugin
 
             // Get the logging facade from the service provider
             var facade = serviceProvider.GetLoggingFacade();
+
+            // access to DateTime constants via provider
+            var now = DateTimeProvider.Now;
+            var utcNow = DateTimeProvider.UtcNow;
+            var today = DateTimeProvider.Today;
         }
     }
 }
