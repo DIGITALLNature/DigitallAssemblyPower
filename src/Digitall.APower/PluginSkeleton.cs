@@ -14,7 +14,7 @@ namespace Digitall.APower
         /// <summary>
         /// Encapsulates access to DateTime to facilitate testing of date-dependent code
         /// </summary>
-        public IDateTimeProvider DateTimeProvider { get; set; } = new SystemDateTimeProvider();
+        public TimeProvider TimeProvider { get; protected set; } = TimeProvider.System;
 
         /// <summary>
         /// Executes the plugin using the provided service provider.
