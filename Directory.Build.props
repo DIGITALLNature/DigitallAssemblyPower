@@ -15,6 +15,7 @@
   <PropertyGroup>
     <TargetFramework>net462</TargetFramework>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <LangVersion>latest</LangVersion>
     <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
   </PropertyGroup>
 
