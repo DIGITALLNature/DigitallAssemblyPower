@@ -9,8 +9,8 @@ namespace Digitall.APower
 {
     public static class ServiceProviderExtensions
     {
-        public static IPluginExecutionContext5 GetExecutionContext(this IServiceProvider serviceProvider) =>
-            serviceProvider.Get<IPluginExecutionContext5>();
+        public static IPluginExecutionContext7 GetExecutionContext(this IServiceProvider serviceProvider) =>
+            serviceProvider.Get<IPluginExecutionContext7>();
 
         public static IOrganizationService GetOrganizationService(this IServiceProvider serviceProvider)
         {
