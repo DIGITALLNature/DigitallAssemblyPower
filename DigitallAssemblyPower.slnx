@@ -1,0 +1,11 @@
+﻿<Solution>
+  <Folder Name="/samples/">
+    <Project Path="examples\SamplePlugin\SamplePlugin.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src\Digitall.APower\Digitall.APower.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests\Digitall.APower.Tests\Digitall.APower.Tests.csproj" Type="Classic C#" />
+  </Folder>
+</Solution>
