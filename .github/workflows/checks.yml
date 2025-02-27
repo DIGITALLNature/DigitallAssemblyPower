@@ -8,7 +8,7 @@ jobs:
   check:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-22.04, windows-latest]
     name: Build & Test (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
@@ -19,13 +19,12 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Cache Packages
-      uses: actions/cache@v3
+    - name: Restore DotNet
+      uses: actions/setup-dotnet@v4
       with:
-        path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget-
+        dotnet-version: 9.x
+        cache: true
+        cache-dependency-path: '**/packages.lock.json'
 
     - name: Restore dependencies
       run: dotnet restore --locked-mode
