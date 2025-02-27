@@ -1,3 +1,12 @@
+# [1.1.0-beta.3](https://github.com/DIGITALLNature/DigitallAssemblyPower/compare/v1.1.0-beta.2...v1.1.0-beta.3) (2025-02-27)
+
+
+### Features
+
+* add RegisterProxyTypesAssembly Extension ([c5311e0](https://github.com/DIGITALLNature/DigitallAssemblyPower/commit/c5311e072fe6421c4f6ab7d2d88968554c13b2fc))
+* DateTimeProvider ([#7](https://github.com/DIGITALLNature/DigitallAssemblyPower/issues/7)) ([d5ade50](https://github.com/DIGITALLNature/DigitallAssemblyPower/commit/d5ade5066d5395774cb7f152b43ecc0bb40be50a))
+* update GetExecutionContext to use IPluginExecutionContext7 ([33aa152](https://github.com/DIGITALLNature/DigitallAssemblyPower/commit/33aa15250c391ff0c68755271e30179a4b13108c))
+
 # [1.1.0-beta.2](https://github.com/DIGITALLNature/DigitallAssemblyPower/compare/v1.1.0-beta.1...v1.1.0-beta.2) (2024-06-20)
 
 
