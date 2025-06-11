@@ -62,8 +62,8 @@
       },
       "Microsoft.Extensions.TimeProvider.Testing": {
         "type": "Transitive",
-        "resolved": "9.2.0",
-        "contentHash": "nqySOOTJJBbpj7tqIWeZwhP1nZ168ycxYY/JR+edzdJH9jI41vniUIfftuBCrG4njkv/Jf5CtR8drzHFm6CBLQ==",
+        "resolved": "9.6.0",
+        "contentHash": "WJ5Yu4SXqZTeayPZTT/M5A2fZPR3Su1nZIDIO/NZvF3ipgIWyjlecKI4uAt0N8e0xtuCdbv1K+luPSZo0E+zFA==",
         "dependencies": {
           "Microsoft.Bcl.TimeProvider": "8.0.1"
         }
@@ -151,7 +151,7 @@
       "dgt.apower": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.Extensions.TimeProvider.Testing": "[9.2.0, )"
+          "Microsoft.Extensions.TimeProvider.Testing": "[9.6.0, )"
         }
       }
     }
