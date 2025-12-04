@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
@@ -34,6 +35,17 @@ public static class PluginExecutionContextExtensions
             if (context.GetInputParameter("Target", out EntityReference target)) return target;
 
             return null;
+        }
+
+        /// <summary>
+        /// Retrieves a list of target entities from the plugin execution context.
+        /// </summary>
+        /// <remarks>Only available when registering the plugin on CreateMultiple or UpdateMultiple.</remarks>
+        public List<TEntity> GetTargets<TEntity>() where TEntity : Entity
+        {
+            if (context.GetInputParameter("Targets", out EntityCollection targets))
+                return targets.Entities.Select(e => e.ToEntity<TEntity>()).ToList();
+            return [];
         }
 
         public Relationship GetRelationship()
@@ -123,11 +135,31 @@ public static class PluginExecutionContextExtensions
             return null;
         }
 
+        /// <summary>
+        /// Retrieves a list of pre-images from the plugin execution context for the specified image name.
+        /// </summary>
+        /// <remarks>Only available when registering the plugin on CreateMultiple or UpdateMultiple.</remarks>
+        public List<TEntity> GetPreImages<TEntity>(string name = "PreImage") where TEntity : Entity
+        {
+            if (context is not IPluginExecutionContext4 context4) return [];
+            return context4.PreEntityImagesCollection.Where(x => x.ContainsKey(name)).Select(x => x[name].ToEntity<TEntity>()).ToList();
+        }
+
         public TEntity GetPostImage<TEntity>(string name = "PostImage") where TEntity : Entity
         {
             if (context.PostEntityImages.TryGetValue(name, out var postImage)) return postImage.ToEntity<TEntity>();
 
             return null;
+        }
+
+        /// <summary>
+        /// Retrieves a collection of post-images from the plugin execution context.
+        /// </summary>
+        /// <remarks>Only available when registering the plugin on CreateMultiple or UpdateMultiple.</remarks>
+        public List<TEntity> GetPostImages<TEntity>(string name = "PostImage") where TEntity : Entity
+        {
+            if (context is not IPluginExecutionContext4 context4) return [];
+            return context4.PostEntityImagesCollection.Where(x => x.ContainsKey(name)).Select(x => x[name].ToEntity<TEntity>()).ToList();
         }
 
         public string GetFormattedExecutionStage() =>
