@@ -10,101 +10,93 @@ namespace Digitall.APower
 {
     public static class ServiceProviderExtensions
     {
-        /// <summary>
-        ///     Returns the <see cref="IPluginExecutionContext7" /> from the service provider.
-        /// </summary>
-        /// <param name="serviceProvider">The service provider.</param>
-        /// <returns>The <see cref="IPluginExecutionContext7" />.</returns>
-        public static IPluginExecutionContext7 GetExecutionContext(this IServiceProvider serviceProvider) =>
-            serviceProvider.Get<IPluginExecutionContext7>();
-
-        /// <summary>
-        /// Retrieves the <see cref="IOrganizationService"/> for the current execution context's user.
-        /// </summary>
-        /// <param name="serviceProvider">The service provider.</param>
-        /// <returns>The <see cref="IOrganizationService"/> for the user specified in the execution context.</returns>
-        public static IOrganizationService GetOrganizationService(this IServiceProvider serviceProvider)
+        extension(IServiceProvider serviceProvider)
         {
-            var executionContext = serviceProvider.GetExecutionContext();
-            return serviceProvider.GetOrganizationService(executionContext.UserId);
-        }
+            /// <summary>
+            /// Retrieves the <see cref="IPluginExecutionContext"/> from the service provider.
+            /// </summary>
+            /// <returns>The <see cref="IPluginExecutionContext"/></returns>
+            public IPluginExecutionContext7 GetExecutionContext() => serviceProvider.Get<IPluginExecutionContext7>();
 
-        /// <summary>
-        /// Retrieves the <see cref="IOrganizationService"/> for the user with the specified <paramref name="userId"/>.
-        /// </summary>
-        /// <param name="serviceProvider">The service provider.</param>
-        /// <param name="userId">The user id of the user for which to retrieve the organization service.</param>
-        /// <returns>The <see cref="IOrganizationService"/> for the user with the specified <paramref name="userId"/>.</returns>
-        public static IOrganizationService GetOrganizationService(this IServiceProvider serviceProvider, Guid userId)
-        {
-            var factory = serviceProvider.Get<IOrganizationServiceFactory>();
-            return factory.CreateOrganizationService(userId);
-        }
+            /// <summary>
+            /// Retrieves the <see cref="IOrganizationService"/> for the user associated with the current execution context from the service provider.
+            /// </summary>
+            /// <returns>The <see cref="IOrganizationService"/> for the user associated with the current execution context.</returns>
+            public IOrganizationService GetOrganizationService()
+            {
+                var executionContext = serviceProvider.GetExecutionContext();
+                return serviceProvider.GetOrganizationService(executionContext.UserId);
+            }
 
-        /// <summary>
-        /// Retrieves the <see cref="IOrganizationService"/> with the "System" user id (i.e. elevated privileges).
-        /// </summary>
-        /// <param name="serviceProvider">The service provider.</param>
-        /// <returns>The <see cref="IOrganizationService"/> with elevated privileges.</returns>
-        public static IOrganizationService GetElevatedOrganizationService(this IServiceProvider serviceProvider)
-        {
-            var factory = serviceProvider.Get<IOrganizationServiceFactory>();
-            return factory.CreateOrganizationService(null);
-        }
+            /// <summary>
+            /// Retrieves the <see cref="IOrganizationService"/> for the specified user id from the service provider.
+            /// </summary>
+            /// <param name="userId">id of the user</param>
+            /// <returns>The <see cref="IOrganizationService"/> for the user</returns>
+            public IOrganizationService GetOrganizationService(Guid userId)
+            {
+                var factory = serviceProvider.Get<IOrganizationServiceFactory>();
+                return factory.CreateOrganizationService(userId);
+            }
 
-        /// <summary>
-        ///     Retrieves the <see cref="ITracingService"/> from the service provider.
-        /// </summary>
-        /// <param name="serviceProvider">The service provider.</param>
-        /// <returns>The <see cref="ITracingService"/>.</returns>
-        public static ITracingService GetTracingService(this IServiceProvider serviceProvider) =>
-            serviceProvider.Get<ITracingService>();
+            /// <summary>
+            /// Retrieves an elevated <see cref="IOrganizationService"/> instance with system-level privileges from the service provider.
+            /// </summary>
+            /// <returns>An <see cref="IOrganizationService"/> instance with system-level privileges.</returns>
+            public IOrganizationService GetElevatedOrganizationService()
+            {
+                var factory = serviceProvider.Get<IOrganizationServiceFactory>();
+                return factory.CreateOrganizationService(null);
+            }
 
-        /// <summary>
-        /// Retrieves the <see cref="ILogger"/> from the service provider.
-        /// </summary>
-        /// <param name="serviceProvider">The service provider.</param>
-        /// <returns>The <see cref="ILogger"/>.</returns>
-        public static ILogger GetLogger(this IServiceProvider serviceProvider) => serviceProvider.Get<ILogger>();
+            /// <summary>
+            /// Retrieves the <see cref="ITracingService"/> from the service provider.
+            /// </summary>
+            /// <returns>The <see cref="ITracingService"/> for the current execution context.</returns>
+            public ITracingService GetTracingService() => serviceProvider.Get<ITracingService>();
 
-        /// <summary>
-        /// Retrieves an instance of the <see cref="ISerializerService"/> from the service provider.
-        /// </summary>
-        /// <param name="serviceProvider">The service provider.</param>
-        /// <returns>An instance of the <see cref="ISerializerService"/>.</returns>
-        public static ISerializerService GetSerializerService(this IServiceProvider serviceProvider) => new SerializerService();
+            /// <summary>
+            /// Retrieves the <see cref="ILogger"/> instance from the service provider.
+            /// </summary>
+            /// <returns>The <see cref="ILogger"/> instance.</returns>
+            public ILogger GetLogger() => serviceProvider.Get<ILogger>();
 
-        /// <summary>
-        /// Retrieves the <see cref="ILoggingFacade" /> from the service provider.
-        /// </summary>
-        /// <param name="serviceProvider">The service provider.</param>
-        /// <returns>An instance of <see cref="ILoggingFacade" />.</returns>
-        public static ILoggingFacade GetLoggingFacade(this IServiceProvider serviceProvider)
-        {
-            var tracingService = serviceProvider.GetTracingService();
-            var logger = serviceProvider.GetLogger();
-            return new LoggingFacade(tracingService, logger);
-        }
+            /// <summary>
+            /// Retrieves an instance of <see cref="ISerializerService"/> for handling JSON serialization and deserialization.
+            /// </summary>
+            /// <returns>An implementation of <see cref="ISerializerService"/>.</returns>
+            public ISerializerService GetSerializerService() => new SerializerService();
 
-        /// <summary>
-        /// Registers the proxy types assembly for the <see cref="IOrganizationServiceFactory"/>.
-        /// </summary>
-        /// <remarks>
-        /// This is a workaround for a known issue in Dynamics 365 where the <see cref="IOrganizationServiceFactory"/> doesn't
-        /// automatically load the proxy types assembly when the service provider is created.
-        ///
-        /// The Behavior is undocumented and usage is without any warrenty!
-        /// </remarks>
-        /// <param name="serviceProvider">The service provider.</param>
-        /// <param name="assembly">The assembly containing the proxy types.</param>
-        /// <returns>The service provider.</returns>
-        public static IServiceProvider RegisterProxyTypesAssembly(this IServiceProvider serviceProvider, Assembly assembly)
-        {
-            var factory = serviceProvider.Get<IOrganizationServiceFactory>();
-            var property = factory.GetType().GetProperty("ProxyTypesAssembly", BindingFlags.Instance | BindingFlags.NonPublic);
-            property.SetValue(factory, assembly, null);
+            /// <summary>
+            /// Creates an instance of <see cref="ILoggingFacade"/> utilizing the tracing service and logger retrieved from the service provider.
+            /// </summary>
+            /// <returns>An <see cref="ILoggingFacade"/> instance configured with the appropriate tracing and logging services.</returns>
+            public ILoggingFacade GetLoggingFacade()
+            {
+                var tracingService = serviceProvider.GetTracingService();
+                var logger = serviceProvider.GetLogger();
+                return new LoggingFacade(tracingService, logger);
+            }
 
-            return serviceProvider;
+            /// <summary>
+            /// Registers the proxy types assembly for the <see cref="IOrganizationServiceFactory"/>.
+            /// </summary>
+            /// <remarks>
+            /// This is a workaround for a known issue in Dynamics 365 where the <see cref="IOrganizationServiceFactory"/> doesn't
+            /// automatically load the proxy types assembly when the service provider is created.
+            ///
+            /// The Behavior is undocumented and usage is without any warranty!
+            /// </remarks>
+            /// <param name="assembly">The assembly containing the proxy types.</param>
+            /// <returns>The service provider.</returns>
+            public IServiceProvider RegisterProxyTypesAssembly(Assembly assembly)
+            {
+                var factory = serviceProvider.Get<IOrganizationServiceFactory>();
+                var property = factory.GetType().GetProperty("ProxyTypesAssembly", BindingFlags.Instance | BindingFlags.NonPublic);
+                property?.SetValue(factory, assembly, null);
+
+                return serviceProvider;
+            }
         }
     }
 }

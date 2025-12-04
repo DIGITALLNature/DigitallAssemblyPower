@@ -36,11 +36,23 @@ namespace SamplePlugin
             // Get the target reference from the execution context
             var reference = executionContext.GetTarget();
 
+            // Get the target entities from the execution context and cast them to an Account collection
+            // Note: This will only work if you register your plugin on CreateMultiple or UpdateMultiple messages
+            var accounts = executionContext.GetTargets<Account>();
+
             // Get the pre-image entity from the execution context and cast it to an Account
             var preImage = executionContext.GetPreImage<Account>();
 
+            // Get the pre-image entities from the execution context and cast them to an Account collection
+            // Note: This will only work if you register your plugin on CreateMultiple or UpdateMultiple messages
+            var preImages = executionContext.GetPreImages<Account>();
+
             // Get the post-image entity from the execution context and cast it to an Account
             var postImage = executionContext.GetPostImage<Account>();
+
+            // Get the post-image entities from the execution context and cast them to an Account collection
+            // Note: This will only work if you register your plugin on CreateMultiple or UpdateMultiple messages
+            var postImages = executionContext.GetPostImages<Account>();
 
             // Get the secured organization service from the service provider
             var secured = serviceProvider.GetOrganizationService();

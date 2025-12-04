@@ -121,6 +121,12 @@ namespace Digitall.APower
         public Entity Entity => Core.GetTarget<Entity>();
 
         /// <summary>
+        /// The target entities of the context.
+        /// </summary>
+        /// <remarks>Only available when registering the plugin on CreateMultiple or UpdateMultiple</remarks>
+        public EntityCollection Entities => new(Core.GetTargets<Entity>());
+
+        /// <summary>
         ///     The target entity reference of the context.
         /// </summary>
         public EntityReference EntityReference => Core.GetTarget();
@@ -193,9 +199,21 @@ namespace Digitall.APower
         public Entity PreEntityImage => Core.GetPreImage<Entity>();
 
         /// <summary>
+        /// The "PreImage" pre-entity images; see Plugin Registration
+        /// <remarks>Only available when registering the plugin on CreateMultiple or UpdateMultiple</remarks>
+        /// </summary>
+        public EntityCollection PreEntityImages => new(Core.GetPreImages<Entity>());
+
+        /// <summary>
         ///     The "PostImage" post-entity image; see Plugin Registration
         /// </summary>
         public Entity PostEntityImage => Core.GetPostImage<Entity>();
+
+        /// <summary>
+        /// The "PostImage" post-entity images; see Plugin Registration
+        /// </summary>
+        /// <remarks>Only available when registering the plugin on CreateMultiple or UpdateMultiple</remarks>
+        public EntityCollection PostEntityImages => new(Core.GetPostImages<Entity>());
 
         /// <summary>
         ///     Get column set from execution context.
