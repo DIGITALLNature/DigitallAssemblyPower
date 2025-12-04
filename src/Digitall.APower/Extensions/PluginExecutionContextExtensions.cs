@@ -64,13 +64,13 @@ namespace Digitall.APower
             /// <summary>
             /// Retrieves a list of target entities from the plugin execution context.
             /// </summary>
-            /// <typeparam name="TEntity">The type of the target entities.</typeparam>
-            /// <returns>A list of target entities if available; otherwise, null.</returns>
+            /// <typeparam name="TEntity">The type of the target entity.</typeparam>
+            /// <returns>A list of entities of the specified type if the target collection exists in the context; otherwise, an empty list.</returns>
             public List<TEntity> GetTargets<TEntity>() where TEntity : Entity
             {
                 if (context.GetInputParameter("Targets", out EntityCollection targets)) return targets.Entities.Select(e => e.ToEntity<TEntity>()).ToList();
 
-                return null;
+                return [];
             }
 
             /// <summary>
