@@ -1,3 +1,10 @@
+# [1.1.0-beta.4](https://github.com/DIGITALLNature/DigitallAssemblyPower/compare/v1.1.0-beta.3...v1.1.0-beta.4) (2025-12-11)
+
+
+### Bug Fixes
+
+* reuse IOrganizationService instances in Executor ([90dd4ec](https://github.com/DIGITALLNature/DigitallAssemblyPower/commit/90dd4ec03ffd3589ed9cdc6408d9e7e788899bdc))
+
 # [1.1.0-beta.3](https://github.com/DIGITALLNature/DigitallAssemblyPower/compare/v1.1.0-beta.2...v1.1.0-beta.3) (2025-02-27)
 
 
