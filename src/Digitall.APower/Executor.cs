@@ -154,12 +154,30 @@ namespace Digitall.APower
         /// <summary>
         ///     Context bounded OrganizationService (secured)
         /// </summary>
-        public IOrganizationService SecuredOrganizationService => ServiceProvider.GetOrganizationService();
+        public IOrganizationService SecuredOrganizationService
+        {
+            get
+            {
+                // allows reuse of the same IOrganizationService instance when property is accessed multiple times
+                field ??= ServiceProvider.GetOrganizationService();
+
+                return field;
+            }
+        }
 
         /// <summary>
         ///     Context bounded OrganizationService (elevated)
         /// </summary>
-        public IOrganizationService ElevatedOrganizationService => ServiceProvider.GetElevatedOrganizationService();
+        public IOrganizationService ElevatedOrganizationService
+        {
+            get
+            {
+                // allows reuse of the same IOrganizationService instance when property is accessed multiple times
+                field ??= ServiceProvider.GetElevatedOrganizationService();
+
+                return field;
+            }
+        }
 
         /// <summary>
         ///     Generic getter for input parameters in execution context.
