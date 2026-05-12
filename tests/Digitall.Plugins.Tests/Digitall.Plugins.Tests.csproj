@@ -30,7 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\examples\SamplePlugin\SamplePlugin.csproj" />
-    <ProjectReference Include="..\..\src\Digitall.APower\Digitall.APower.csproj" />
+    <ProjectReference Include="..\..\src\Digitall.Plugins\Digitall.Plugins.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,28 +1,28 @@
 ﻿using System;
 using System.Reflection;
-using Digitall.APower.Contracts;
-using Digitall.APower.Services;
+using Digitall.Plugins.Services;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Extensions;
 using Microsoft.Xrm.Sdk.PluginTelemetry;
 
-namespace Digitall.APower
+namespace Digitall.Plugins.Extensions;
+
+public static class ServiceProviderExtensions
 {
-    public static class ServiceProviderExtensions
+    /// <param name="serviceProvider">The service provider.</param>
+    extension(IServiceProvider serviceProvider)
     {
         /// <summary>
         ///     Returns the <see cref="IPluginExecutionContext7" /> from the service provider.
         /// </summary>
-        /// <param name="serviceProvider">The service provider.</param>
         /// <returns>The <see cref="IPluginExecutionContext7" />.</returns>
-        public static IPluginExecutionContext7 GetExecutionContext(this IServiceProvider serviceProvider) => serviceProvider.Get<IPluginExecutionContext7>();
+        public IPluginExecutionContext7 GetExecutionContext() => serviceProvider.Get<IPluginExecutionContext7>();
 
         /// <summary>
         /// Retrieves the <see cref="IOrganizationService"/> for the current execution context's user.
         /// </summary>
-        /// <param name="serviceProvider">The service provider.</param>
         /// <returns>The <see cref="IOrganizationService"/> for the user specified in the execution context.</returns>
-        public static IOrganizationService GetOrganizationService(this IServiceProvider serviceProvider)
+        public IOrganizationService GetOrganizationService()
         {
             var executionContext = serviceProvider.GetExecutionContext();
             return serviceProvider.GetOrganizationService(executionContext.UserId);
@@ -31,10 +31,9 @@ namespace Digitall.APower
         /// <summary>
         /// Retrieves the <see cref="IOrganizationService"/> for the user with the specified <paramref name="userId"/>.
         /// </summary>
-        /// <param name="serviceProvider">The service provider.</param>
         /// <param name="userId">The user id of the user for which to retrieve the organization service.</param>
         /// <returns>The <see cref="IOrganizationService"/> for the user with the specified <paramref name="userId"/>.</returns>
-        public static IOrganizationService GetOrganizationService(this IServiceProvider serviceProvider, Guid userId)
+        public IOrganizationService GetOrganizationService(Guid userId)
         {
             var factory = serviceProvider.Get<IOrganizationServiceFactory>();
             return factory.CreateOrganizationService(userId);
@@ -43,9 +42,8 @@ namespace Digitall.APower
         /// <summary>
         /// Retrieves the <see cref="IOrganizationService"/> with the "System" user id (i.e. elevated privileges).
         /// </summary>
-        /// <param name="serviceProvider">The service provider.</param>
         /// <returns>The <see cref="IOrganizationService"/> with elevated privileges.</returns>
-        public static IOrganizationService GetElevatedOrganizationService(this IServiceProvider serviceProvider)
+        public IOrganizationService GetElevatedOrganizationService()
         {
             var factory = serviceProvider.Get<IOrganizationServiceFactory>();
             return factory.CreateOrganizationService(null);
@@ -54,23 +52,20 @@ namespace Digitall.APower
         /// <summary>
         ///     Retrieves the <see cref="ITracingService"/> from the service provider.
         /// </summary>
-        /// <param name="serviceProvider">The service provider.</param>
         /// <returns>The <see cref="ITracingService"/>.</returns>
-        public static ITracingService GetTracingService(this IServiceProvider serviceProvider) => serviceProvider.Get<ITracingService>();
+        public ITracingService GetTracingService() => serviceProvider.Get<ITracingService>();
 
         /// <summary>
         /// Retrieves the <see cref="ILogger"/> from the service provider.
         /// </summary>
-        /// <param name="serviceProvider">The service provider.</param>
         /// <returns>The <see cref="ILogger"/>.</returns>
-        public static ILogger GetLogger(this IServiceProvider serviceProvider) => serviceProvider.Get<ILogger>();
+        public ILogger GetLogger() => serviceProvider.Get<ILogger>();
 
         /// <summary>
         /// Retrieves an instance of the <see cref="ISerializerService"/> from the service provider.
         /// </summary>
-        /// <param name="serviceProvider">The service provider.</param>
         /// <returns>An instance of the <see cref="ISerializerService"/>.</returns>
-        public static ISerializerService GetSerializerService(this IServiceProvider serviceProvider) => new SerializerService();
+        public static ISerializerService GetSerializerService() => new SerializerService();
 
         /// <summary>
         /// Retrieves the <see cref="TimeProvider"/> from the service provider.
@@ -84,9 +79,8 @@ namespace Digitall.APower
         /// <summary>
         /// Retrieves the <see cref="ILoggingFacade" /> from the service provider.
         /// </summary>
-        /// <param name="serviceProvider">The service provider.</param>
         /// <returns>An instance of <see cref="ILoggingFacade" />.</returns>
-        public static ILoggingFacade GetLoggingFacade(this IServiceProvider serviceProvider)
+        public ILoggingFacade GetLoggingFacade()
         {
             var tracingService = serviceProvider.GetTracingService();
             var logger = serviceProvider.GetLogger();
@@ -96,9 +90,8 @@ namespace Digitall.APower
         /// <summary>
         /// Retrieves the <see cref="IManagedIdentityService"/> from the service provider.
         /// </summary>
-        /// <param name="serviceProvider">The service provider.</param>
         /// <returns>An instance of <see cref="IManagedIdentityService" />.</returns>
-        public static IManagedIdentityService GetManagedIdentityService(this IServiceProvider serviceProvider) => serviceProvider.Get<IManagedIdentityService>();
+        public IManagedIdentityService GetManagedIdentityService() => serviceProvider.Get<IManagedIdentityService>();
 
         /// <summary>
         /// Registers the proxy types assembly for the <see cref="IOrganizationServiceFactory"/>.
@@ -109,10 +102,9 @@ namespace Digitall.APower
         ///
         /// The Behavior is undocumented and usage is without any warrenty!
         /// </remarks>
-        /// <param name="serviceProvider">The service provider.</param>
         /// <param name="assembly">The assembly containing the proxy types.</param>
         /// <returns>The service provider.</returns>
-        public static IServiceProvider RegisterProxyTypesAssembly(this IServiceProvider serviceProvider, Assembly assembly)
+        public IServiceProvider RegisterProxyTypesAssembly(Assembly assembly)
         {
             var factory = serviceProvider.Get<IOrganizationServiceFactory>();
             var property = factory.GetType().GetProperty("ProxyTypesAssembly", BindingFlags.Instance | BindingFlags.NonPublic);

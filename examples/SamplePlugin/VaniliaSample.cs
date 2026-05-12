@@ -3,7 +3,7 @@
 
 using System;
 using System.ServiceModel;
-using Digitall.APower;
+using Digitall.Plugins.Extensions;
 using Microsoft.Xrm.Sdk;
 
 namespace SamplePlugin

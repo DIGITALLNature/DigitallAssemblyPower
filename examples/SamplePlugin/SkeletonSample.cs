@@ -3,7 +3,8 @@
 
 using System;
 using dgt.Model.Dataverse;
-using Digitall.APower;
+using Digitall.Plugins;
+using Digitall.Plugins.Extensions;
 using Microsoft.Xrm.Sdk;
 
 namespace SamplePlugin
