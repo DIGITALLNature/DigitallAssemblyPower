@@ -56,6 +56,10 @@ namespace SamplePlugin
             // Get the logging facade from the service provider
             var facade = serviceProvider.GetLoggingFacade();
 
+            // Get the managed identity service from the service provider
+            var miService = serviceProvider.GetManagedIdentityService();
+            var accessToken = miService.AcquireToken(["https://my.api.com/.default"]);
+
             // access to current DateTimeOffset values via provider
             var timeProvider = serviceProvider.GetTimeProvider();
             var now = timeProvider.GetLocalNow();

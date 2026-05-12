@@ -94,6 +94,13 @@ namespace Digitall.APower
         }
 
         /// <summary>
+        /// Retrieves the <see cref="IManagedIdentityService"/> from the service provider.
+        /// </summary>
+        /// <param name="serviceProvider">The service provider.</param>
+        /// <returns>An instance of <see cref="IManagedIdentityService" />.</returns>
+        public static IManagedIdentityService GetManagedIdentityService(this IServiceProvider serviceProvider) => serviceProvider.Get<IManagedIdentityService>();
+
+        /// <summary>
         /// Registers the proxy types assembly for the <see cref="IOrganizationServiceFactory"/>.
         /// </summary>
         /// <remarks>
@@ -109,7 +116,7 @@ namespace Digitall.APower
         {
             var factory = serviceProvider.Get<IOrganizationServiceFactory>();
             var property = factory.GetType().GetProperty("ProxyTypesAssembly", BindingFlags.Instance | BindingFlags.NonPublic);
-            property.SetValue(factory, assembly, null);
+            property?.SetValue(factory, assembly, null);
 
             return serviceProvider;
         }
