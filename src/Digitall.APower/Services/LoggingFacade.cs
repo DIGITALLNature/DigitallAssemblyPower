@@ -3,48 +3,34 @@ using Digitall.APower.Contracts;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.PluginTelemetry;
 
-namespace Digitall.APower.Services
+namespace Digitall.APower.Services;
+
+public class LoggingFacade(ITracingService tracingService, ILogger logger) : ILoggingFacade
 {
-    public class LoggingFacade : ILoggingFacade
+    public void Log(LogLevel logLevel, string message, params object[] @params)
     {
-        private readonly ITracingService _tracingService;
-        private readonly ILogger _logger;
-
-        public LoggingFacade(ITracingService tracingService, ILogger logger)
-        {
-            _tracingService = tracingService;
-            _logger = logger;
-        }
-
-        public void Log(LogLevel logLevel, string message, params object[] @params)
-        {
-            _tracingService.Trace($"{logLevel}: {message}", @params);
-            _logger.Log(logLevel, message, @params);
-        }
-
-        public void Log(LogLevel logLevel, Exception exception, string message, params object[] @params)
-        {
-            _tracingService.Trace(
-                $"{logLevel}: {message}{Environment.NewLine}{exception}{Environment.NewLine}{exception.StackTrace}", @params);
-            _logger.Log(logLevel, exception, message, @params);
-        }
-
-        public void LogTrace(string message, params object[] @params) => Log(LogLevel.Trace, message, @params);
-        public void LogDebug(string message, params object[] @params) => Log(LogLevel.Debug, message, @params);
-        public void LogInformation(string message, params object[] @params) => Log(LogLevel.Information, message, @params);
-        public void LogWarning(string message, params object[] @params) => Log(LogLevel.Warning, message, @params);
-
-        public void LogWarning(Exception exception, string message, params object[] @params) =>
-            Log(LogLevel.Warning, exception, message, @params);
-
-        public void LogError(string message, params object[] @params) => Log(LogLevel.Error, message, @params);
-
-        public void LogError(Exception exception, string message, params object[] @params) =>
-            Log(LogLevel.Error, exception, message, @params);
-
-        public void LogCritical(string message, params object[] @params) => Log(LogLevel.Critical, message, @params);
-
-        public void LogCritical(Exception exception, string message, params object[] @params) =>
-            Log(LogLevel.Critical, exception, message, @params);
+        tracingService.Trace($"{logLevel}: {message}", @params);
+        logger.Log(logLevel, message, @params);
     }
+
+    public void Log(LogLevel logLevel, Exception exception, string message, params object[] @params)
+    {
+        tracingService.Trace($"{logLevel}: {message}{Environment.NewLine}{exception}{Environment.NewLine}{exception.StackTrace}", @params);
+        logger.Log(logLevel, exception, message, @params);
+    }
+
+    public void LogTrace(string message, params object[] @params) => Log(LogLevel.Trace, message, @params);
+    public void LogDebug(string message, params object[] @params) => Log(LogLevel.Debug, message, @params);
+    public void LogInformation(string message, params object[] @params) => Log(LogLevel.Information, message, @params);
+    public void LogWarning(string message, params object[] @params) => Log(LogLevel.Warning, message, @params);
+
+    public void LogWarning(Exception exception, string message, params object[] @params) => Log(LogLevel.Warning, exception, message, @params);
+
+    public void LogError(string message, params object[] @params) => Log(LogLevel.Error, message, @params);
+
+    public void LogError(Exception exception, string message, params object[] @params) => Log(LogLevel.Error, exception, message, @params);
+
+    public void LogCritical(string message, params object[] @params) => Log(LogLevel.Critical, message, @params);
+
+    public void LogCritical(Exception exception, string message, params object[] @params) => Log(LogLevel.Critical, exception, message, @params);
 }

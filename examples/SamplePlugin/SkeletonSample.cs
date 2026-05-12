@@ -4,6 +4,7 @@
 using System;
 using dgt.Model.Dataverse;
 using Digitall.APower;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Time.Testing;
 using Microsoft.Xrm.Sdk;
 
@@ -56,6 +57,9 @@ namespace SamplePlugin
 
             // Get the logging facade from the service provider
             var facade = serviceProvider.GetLoggingFacade();
+
+            // Get a Microsoft.Extensions.Logging.ILogger compatible logger from the service provider
+            var logAdapter = serviceProvider.GetLogger<SkeletonSample>();
 
             // access to DateTime constants via provider
             var now = TimeProvider.GetLocalNow();

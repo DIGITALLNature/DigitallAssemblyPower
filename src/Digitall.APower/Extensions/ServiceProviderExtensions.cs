@@ -2,9 +2,10 @@
 using System.Reflection;
 using Digitall.APower.Contracts;
 using Digitall.APower.Services;
+using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Extensions;
-using Microsoft.Xrm.Sdk.PluginTelemetry;
+using IPluginLogger = Microsoft.Xrm.Sdk.PluginTelemetry.ILogger;
 
 namespace Digitall.APower
 {
@@ -15,8 +16,7 @@ namespace Digitall.APower
         /// </summary>
         /// <param name="serviceProvider">The service provider.</param>
         /// <returns>The <see cref="IPluginExecutionContext7" />.</returns>
-        public static IPluginExecutionContext7 GetExecutionContext(this IServiceProvider serviceProvider) =>
-            serviceProvider.Get<IPluginExecutionContext7>();
+        public static IPluginExecutionContext7 GetExecutionContext(this IServiceProvider serviceProvider) => serviceProvider.Get<IPluginExecutionContext7>();
 
         /// <summary>
         /// Retrieves the <see cref="IOrganizationService"/> for the current execution context's user.
@@ -57,15 +57,14 @@ namespace Digitall.APower
         /// </summary>
         /// <param name="serviceProvider">The service provider.</param>
         /// <returns>The <see cref="ITracingService"/>.</returns>
-        public static ITracingService GetTracingService(this IServiceProvider serviceProvider) =>
-            serviceProvider.Get<ITracingService>();
+        public static ITracingService GetTracingService(this IServiceProvider serviceProvider) => serviceProvider.Get<ITracingService>();
 
         /// <summary>
-        /// Retrieves the <see cref="ILogger"/> from the service provider.
+        /// Retrieves the <see cref="Microsoft.Xrm.Sdk.PluginTelemetry.ILogger"/> from the service provider.
         /// </summary>
         /// <param name="serviceProvider">The service provider.</param>
-        /// <returns>The <see cref="ILogger"/>.</returns>
-        public static ILogger GetLogger(this IServiceProvider serviceProvider) => serviceProvider.Get<ILogger>();
+        /// <returns>The <see cref="Microsoft.Xrm.Sdk.PluginTelemetry.ILogger"/>.</returns>
+        public static IPluginLogger GetLogger(this IServiceProvider serviceProvider) => serviceProvider.Get<IPluginLogger>();
 
         /// <summary>
         /// Retrieves an instance of the <see cref="ISerializerService"/> from the service provider.
@@ -79,11 +78,23 @@ namespace Digitall.APower
         /// </summary>
         /// <param name="serviceProvider">The service provider.</param>
         /// <returns>An instance of <see cref="ILoggingFacade" />.</returns>
+        [Obsolete("Use GetLogger<TPlugin>() instead to get a Microsoft.Extensions.Logging.ILogger compatible logger.")]
         public static ILoggingFacade GetLoggingFacade(this IServiceProvider serviceProvider)
         {
             var tracingService = serviceProvider.GetTracingService();
             var logger = serviceProvider.GetLogger();
             return new LoggingFacade(tracingService, logger);
+        }
+
+        /// <summary>
+        /// Retrieves a <see cref="Microsoft.Extensions.Logging.ILogger"/> compatible logger from the service provider.
+        /// </summary>
+        /// <param name="serviceProvider">The service provider.</param>
+        /// <returns>The <see cref="Microsoft.Extensions.Logging.ILogger"/>.</returns>
+        public static ILogger<TPlugin> GetLogger<TPlugin>(this IServiceProvider serviceProvider) where TPlugin : IPlugin
+        {
+            var logger = serviceProvider.GetLogger();
+            return new PluginLoggingAdapter<TPlugin>(logger);
         }
 
         /// <summary>
