@@ -1,9 +1,13 @@
-﻿using System;
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Reflection;
 using Digitall.Plugins.Services;
+using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Extensions;
-using Microsoft.Xrm.Sdk.PluginTelemetry;
+using IPluginLogger = Microsoft.Xrm.Sdk.PluginTelemetry.ILogger;
+// ReSharper disable UnusedMember.Global
 
 namespace Digitall.Plugins.Extensions;
 
@@ -56,10 +60,10 @@ public static class ServiceProviderExtensions
         public ITracingService GetTracingService() => serviceProvider.Get<ITracingService>();
 
         /// <summary>
-        /// Retrieves the <see cref="ILogger"/> from the service provider.
+        /// Retrieves the <see cref="Microsoft.Xrm.Sdk.PluginTelemetry.ILogger"/> from the service provider.
         /// </summary>
-        /// <returns>The <see cref="ILogger"/>.</returns>
-        public ILogger GetLogger() => serviceProvider.Get<ILogger>();
+        /// <returns>The <see cref="Microsoft.Xrm.Sdk.PluginTelemetry.ILogger"/>.</returns>
+        public IPluginLogger GetLogger() => serviceProvider.Get<IPluginLogger>();
 
         /// <summary>
         /// Retrieves an instance of the <see cref="ISerializerService"/> from the service provider.
@@ -72,19 +76,32 @@ public static class ServiceProviderExtensions
         /// It should be used when implementing date-dependent logic and enables unit testing.
         /// In Dataverse runtime, this falls back to <see cref="TimeProvider.System"/> when no provider is registered.
         /// </summary>
-        /// <param name="serviceProvider">The service provider.</param>
         /// <returns>The <see cref="TimeProvider"/> instance.</returns>
-        public static TimeProvider GetTimeProvider(this IServiceProvider serviceProvider) => serviceProvider.Get<TimeProvider>() ?? TimeProvider.System;
+        public TimeProvider GetTimeProvider() => serviceProvider.Get<TimeProvider>() ?? TimeProvider.System;
 
         /// <summary>
         /// Retrieves the <see cref="ILoggingFacade" /> from the service provider.
         /// </summary>
         /// <returns>An instance of <see cref="ILoggingFacade" />.</returns>
+        [Obsolete(
+            "Use GetLogger(LogSink.PluginTelemetry, LogSink.TracingService) instead to get a " +
+            "Microsoft.Extensions.Logging.ILogger compatible logger which logs to both ILogger and ITracingService.")]
         public ILoggingFacade GetLoggingFacade()
         {
             var tracingService = serviceProvider.GetTracingService();
             var logger = serviceProvider.GetLogger();
             return new LoggingFacade(tracingService, logger);
+        }
+
+        /// <summary>
+        /// Retrieves an <see cref="ILogger{TCategoryName}"/> for the specified plugin type.
+        /// </summary>
+        /// <typeparam name="TPlugin">The plugin type used as the logger category.</typeparam>
+        /// <returns>An <see cref="ILogger{TCategoryName}"/> backed by the plugin telemetry logger.</returns>
+        public ILogger<TPlugin> GetLogger<TPlugin>() where TPlugin : IPlugin
+        {
+            var logger = serviceProvider.GetLogger();
+            return new PluginLoggingAdapter<TPlugin>(logger);
         }
 
         /// <summary>
@@ -104,6 +121,7 @@ public static class ServiceProviderExtensions
         /// </remarks>
         /// <param name="assembly">The assembly containing the proxy types.</param>
         /// <returns>The service provider.</returns>
+        [SuppressMessage("Major Code Smell", "S3011", Justification = "Dataverse plugin runtime requires setting ProxyTypesAssembly via reflection.")]
         public IServiceProvider RegisterProxyTypesAssembly(Assembly assembly)
         {
             var factory = serviceProvider.Get<IOrganizationServiceFactory>();

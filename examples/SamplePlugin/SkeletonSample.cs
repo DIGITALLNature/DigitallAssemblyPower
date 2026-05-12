@@ -5,6 +5,7 @@ using System;
 using dgt.Model.Dataverse;
 using Digitall.Plugins;
 using Digitall.Plugins.Extensions;
+using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
 
 namespace SamplePlugin
@@ -55,7 +56,12 @@ namespace SamplePlugin
             var logger = serviceProvider.GetLogger();
 
             // Get the logging facade from the service provider
+#pragma warning disable CS0618
             var facade = serviceProvider.GetLoggingFacade();
+#pragma warning restore CS0618
+
+            // Get a Microsoft.Extensions.Logging.ILogger compatible logger from the service provider
+            ILogger<SkeletonSample> typedLogger = serviceProvider.GetLogger<SkeletonSample>();
 
             // Get the managed identity service from the service provider
             var miService = serviceProvider.GetManagedIdentityService();
