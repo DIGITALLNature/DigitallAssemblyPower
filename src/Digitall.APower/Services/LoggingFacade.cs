@@ -5,6 +5,7 @@ using Microsoft.Xrm.Sdk.PluginTelemetry;
 
 namespace Digitall.APower.Services;
 
+[Obsolete("Use Microsoft.Extensions.Logging.ILogger instead. You can retrieve an ILogger from the service provider where you can specify the log sinks.")]
 public class LoggingFacade(ITracingService tracingService, ILogger logger) : ILoggingFacade
 {
     public void Log(LogLevel logLevel, string message, params object[] @params)

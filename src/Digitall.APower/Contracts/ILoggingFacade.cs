@@ -4,6 +4,7 @@ using Microsoft.Xrm.Sdk.PluginTelemetry;
 #pragma warning disable CA1716
 namespace Digitall.APower.Contracts
 {
+    [Obsolete("Use Microsoft.Extensions.Logging.ILogger instead. You can retrieve an ILogger from the service provider where you can specify the log sinks.")]
     public interface ILoggingFacade
     {
         void Log(LogLevel logLevel, string message, params object[] @params);

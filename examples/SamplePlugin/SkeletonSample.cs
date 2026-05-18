@@ -4,6 +4,7 @@
 using System;
 using dgt.Model.Dataverse;
 using Digitall.APower;
+using Digitall.APower.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Time.Testing;
 using Microsoft.Xrm.Sdk;
@@ -52,14 +53,14 @@ namespace SamplePlugin
             // Get the tracing service from the service provider
             var tracing = serviceProvider.GetTracingService();
 
-            // Get the logger from the service provider
-            var logger = serviceProvider.GetLogger();
-
-            // Get the logging facade from the service provider
-            var facade = serviceProvider.GetLoggingFacade();
+            // Get the Dataverse logger from the service provider
+            var logger1 = serviceProvider.GetLogger();
 
             // Get a Microsoft.Extensions.Logging.ILogger compatible logger from the service provider
-            var logAdapter = serviceProvider.GetLogger<SkeletonSample>();
+            // You can specify the log sinks you want to use: Microsoft.Xrm.Sdk.PluginTelemetry.ILogger / Microsoft.Xrm.Sdk.ITracingService / both
+            // The logger logs to every sink specified
+            // If no sinks are specified, TracingService is used as a fallback
+            var logger2 = serviceProvider.GetLogger(LogSink.PluginTelemetry, LogSink.TracingService);
 
             // access to DateTime constants via provider
             var now = TimeProvider.GetLocalNow();

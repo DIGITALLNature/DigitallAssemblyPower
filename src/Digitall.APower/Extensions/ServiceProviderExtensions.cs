@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using Digitall.APower.Contracts;
+using Digitall.APower.Logging;
 using Digitall.APower.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
@@ -78,7 +80,7 @@ namespace Digitall.APower
         /// </summary>
         /// <param name="serviceProvider">The service provider.</param>
         /// <returns>An instance of <see cref="ILoggingFacade" />.</returns>
-        [Obsolete("Use GetLogger<TPlugin>() instead to get a Microsoft.Extensions.Logging.ILogger compatible logger.")]
+        [Obsolete("Use GetLogger(LogSink.PluginTelemetry, LogSink.TracingService) instead to get a Microsoft.Extensions.Logging.ILogger compatible logger which logs to both ILogger and ITracingService.")]
         public static ILoggingFacade GetLoggingFacade(this IServiceProvider serviceProvider)
         {
             var tracingService = serviceProvider.GetTracingService();
@@ -87,14 +89,25 @@ namespace Digitall.APower
         }
 
         /// <summary>
-        /// Retrieves a <see cref="Microsoft.Extensions.Logging.ILogger"/> compatible logger from the service provider.
+        /// Retrieves a <see cref="Microsoft.Extensions.Logging.ILogger"/> from the service provider.
         /// </summary>
         /// <param name="serviceProvider">The service provider.</param>
-        /// <returns>The <see cref="Microsoft.Extensions.Logging.ILogger"/>.</returns>
-        public static ILogger<TPlugin> GetLogger<TPlugin>(this IServiceProvider serviceProvider) where TPlugin : IPlugin
+        /// <param name="sinks">The log sinks to use for the logger. If none is provided, <see cref="LogSink.TracingService"/> will be used as a fallback.</param>
+        /// <returns>An instance of <see cref="Microsoft.Extensions.Logging.ILogger"/>.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if no valid log sinks are provided.</exception>
+        public static ILogger GetLogger(this IServiceProvider serviceProvider, params LogSink[] sinks)
         {
-            var logger = serviceProvider.GetLogger();
-            return new PluginLoggingAdapter<TPlugin>(logger);
+            // fall back to ITracingService as default sink
+            if (sinks.Length == 0) sinks = [LogSink.TracingService];
+
+            var loggers = sinks.Select<LogSink, ILogger>(sink => sink switch
+            {
+                LogSink.PluginTelemetry => new PluginTelemetryLogger(serviceProvider.GetLogger()),
+                LogSink.TracingService => new TracingServiceLogger(serviceProvider.GetTracingService()),
+                _ => throw new ArgumentOutOfRangeException(nameof(sinks), $"Unsupported log sink: {sink}")
+            }).ToList();
+
+            return loggers.Count == 1 ? loggers[0] : new CompositeLogger(loggers);
         }
 
         /// <summary>
@@ -117,5 +130,11 @@ namespace Digitall.APower
 
             return serviceProvider;
         }
+    }
+
+    public enum LogSink
+    {
+        PluginTelemetry,
+        TracingService
     }
 }
