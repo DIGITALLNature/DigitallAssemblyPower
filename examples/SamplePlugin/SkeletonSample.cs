@@ -4,8 +4,6 @@
 using System;
 using dgt.Model.Dataverse;
 using Digitall.APower;
-using Digitall.APower.Logging;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Time.Testing;
 using Microsoft.Xrm.Sdk;
 
