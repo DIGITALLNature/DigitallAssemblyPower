@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using Digitall.Plugins.Logging;
 using Digitall.Plugins.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
@@ -94,14 +95,24 @@ public static class ServiceProviderExtensions
         }
 
         /// <summary>
-        /// Retrieves an <see cref="ILogger{TCategoryName}"/> for the specified plugin type.
+        /// Retrieves a <see cref="Microsoft.Extensions.Logging.ILogger"/> from the service provider.
         /// </summary>
-        /// <typeparam name="TPlugin">The plugin type used as the logger category.</typeparam>
-        /// <returns>An <see cref="ILogger{TCategoryName}"/> backed by the plugin telemetry logger.</returns>
-        public ILogger<TPlugin> GetLogger<TPlugin>() where TPlugin : IPlugin
+        /// <param name="sinks">The log sinks to use for the logger. If none is provided, <see cref="LogSink.TracingService"/> will be used as a fallback.</param>
+        /// <returns>An instance of <see cref="Microsoft.Extensions.Logging.ILogger"/>.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if no valid log sinks are provided.</exception>
+        public ILogger GetLogger(params LogSink[] sinks)
         {
-            var logger = serviceProvider.GetLogger();
-            return new PluginLoggingAdapter<TPlugin>(logger);
+            if (sinks == null) throw new ArgumentNullException(nameof(sinks));
+            if (sinks.Length == 0) sinks = [LogSink.TracingService];
+
+            var loggers = sinks.Select<LogSink, ILogger>(sink => sink switch
+            {
+                LogSink.PluginTelemetry => new PluginTelemetryLogger(serviceProvider.GetLogger()),
+                LogSink.TracingService => new TracingServiceLogger(serviceProvider.GetTracingService()),
+                _ => throw new ArgumentOutOfRangeException(nameof(sink), $"Unsupported log sink: {sink}")
+            }).ToList();
+
+            return loggers.Count == 1 ? loggers[0] : new CompositeLogger(loggers);
         }
 
         /// <summary>
@@ -130,5 +141,11 @@ public static class ServiceProviderExtensions
 
             return serviceProvider;
         }
+    }
+
+    public enum LogSink
+    {
+        PluginTelemetry,
+        TracingService
     }
 }
