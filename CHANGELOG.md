@@ -1,3 +1,10 @@
+# [1.1.0-beta.5](https://github.com/DIGITALLNature/DigitallAssemblyPower/compare/v1.1.0-beta.4...v1.1.0-beta.5) (2026-05-19)
+
+
+### Bug Fixes
+
+* TimeProvider dependency ([ab6d8c0](https://github.com/DIGITALLNature/DigitallAssemblyPower/commit/ab6d8c0ba82f45b6742b7bc760aca81b29c6bb9e))
+
 # [1.1.0-beta.4](https://github.com/DIGITALLNature/DigitallAssemblyPower/compare/v1.1.0-beta.3...v1.1.0-beta.4) (2025-12-11)
 
 
