@@ -3,8 +3,6 @@
 
 using System;
 using System.Diagnostics;
-using Digitall.APower.Contracts;
-using Digitall.APower.Services;
 using Microsoft.Xrm.Sdk;
 
 namespace Digitall.APower
