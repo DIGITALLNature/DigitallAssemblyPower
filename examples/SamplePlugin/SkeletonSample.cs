@@ -4,7 +4,6 @@
 using System;
 using dgt.Model.Dataverse;
 using Digitall.APower;
-using Microsoft.Extensions.Time.Testing;
 using Microsoft.Xrm.Sdk;
 
 namespace SamplePlugin
@@ -60,11 +59,6 @@ namespace SamplePlugin
             // access to DateTime constants via provider
             var now = TimeProvider.GetLocalNow();
             var utcNow = TimeProvider.GetUtcNow();
-
-            TimeProvider = new FakeTimeProvider(new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Local));
-            // access to DateTime constants via provider
-            var nowFaked = TimeProvider.GetLocalNow();
-            var utcNowFaked = TimeProvider.GetUtcNow();
         }
     }
 }
