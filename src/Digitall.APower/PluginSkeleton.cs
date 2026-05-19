@@ -3,8 +3,7 @@
 
 using System;
 using System.Diagnostics;
-using Digitall.APower.Contracts;
-using Digitall.APower.Services;
+using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
 
 namespace Digitall.APower
@@ -23,7 +22,7 @@ namespace Digitall.APower
         public void Execute(IServiceProvider serviceProvider)
         {
             // Get the logger from the service provider
-            var logger = serviceProvider.GetLoggingFacade();
+            var logger = serviceProvider.GetLogger(LogSink.PluginTelemetry, LogSink.TracingService);
 
             // Start a stopwatch to measure execution time
             var stopwatch = Stopwatch.StartNew();
@@ -34,9 +33,8 @@ namespace Digitall.APower
                 var executionContext = serviceProvider.GetExecutionContext();
 
                 // Log the start of the execution
-                logger.LogInformation("Execution started {0}: Message {1} - Stage {2} - Mode {3}", GetType().FullName,
-                    executionContext.MessageName, executionContext.GetFormattedExecutionStage(),
-                    executionContext.GetFormattedExecutionMode());
+                logger.LogInformation("Execution started {PluginType}: Message {MessageName} - Stage {ExecutionStage} - Mode {ExecutionMode}", GetType().FullName, executionContext.MessageName,
+                    executionContext.GetFormattedExecutionStage(), executionContext.GetFormattedExecutionMode());
 
                 // Execute the plugin's internal logic
                 ExecuteInternal(serviceProvider);
@@ -50,7 +48,7 @@ namespace Digitall.APower
             finally
             {
                 // Log the end of the execution and the elapsed time
-                logger.LogInformation("Execution finished in {0} ms", stopwatch.ElapsedMilliseconds);
+                logger.LogInformation("Execution finished in {ElapsedMilliseconds} ms", stopwatch.ElapsedMilliseconds);
             }
         }
 
