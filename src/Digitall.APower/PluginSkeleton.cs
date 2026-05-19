@@ -8,7 +8,7 @@ using Microsoft.Xrm.Sdk;
 
 namespace Digitall.APower
 {
-    public abstract class PluginSkeleton : IPlugin
+    public abstract partial class PluginSkeleton : IPlugin
     {
         /// <summary>
         /// Encapsulates access to DateTime to facilitate testing of date-dependent code
@@ -33,8 +33,7 @@ namespace Digitall.APower
                 var executionContext = serviceProvider.GetExecutionContext();
 
                 // Log the start of the execution
-                logger.LogInformation("Execution started {PluginType}: Message {MessageName} - Stage {ExecutionStage} - Mode {ExecutionMode}", GetType().FullName, executionContext.MessageName,
-                    executionContext.GetFormattedExecutionStage(), executionContext.GetFormattedExecutionMode());
+                LogExecutionStart(logger, GetType().FullName, executionContext.MessageName, executionContext.GetFormattedExecutionStage(), executionContext.GetFormattedExecutionMode());
 
                 // Execute the plugin's internal logic
                 ExecuteInternal(serviceProvider);
@@ -42,16 +41,25 @@ namespace Digitall.APower
             catch (Exception exception)
             {
                 // Log any exceptions that occur during execution
-                logger.LogError(exception, "Execution failed");
+                LogExecutionFailed(logger, exception);
                 throw;
             }
             finally
             {
                 // Log the end of the execution and the elapsed time
-                logger.LogInformation("Execution finished in {ElapsedMilliseconds} ms", stopwatch.ElapsedMilliseconds);
+                LogExecutionEnd(logger, stopwatch.ElapsedMilliseconds);
             }
         }
 
         protected abstract void ExecuteInternal(IServiceProvider serviceProvider);
+
+        [LoggerMessage(LogLevel.Information, "Execution started {PluginType}: Message {MessageName} - Stage {ExecutionStage} - Mode {ExecutionMode}")]
+        static partial void LogExecutionStart(ILogger logger, string pluginType, string messageName, string executionStage, string executionMode);
+
+        [LoggerMessage(LogLevel.Error, "Execution failed")]
+        static partial void LogExecutionFailed(ILogger logger, Exception exception);
+
+        [LoggerMessage(LogLevel.Information, "Execution finished in {ElapsedMilliseconds} ms")]
+        static partial void LogExecutionEnd(ILogger logger, long elapsedMilliseconds);
     }
 }

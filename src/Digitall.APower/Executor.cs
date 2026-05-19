@@ -10,8 +10,8 @@ namespace Digitall.APower
 {
     public abstract class Executor : IPlugin
     {
-        public readonly string SecureConfig;
-        public readonly string UnsecureConfig;
+        public string SecureConfig { get; }
+        public string UnsecureConfig { get; }
 
         /// <summary>
         /// </summary>
