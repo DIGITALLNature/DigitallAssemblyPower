@@ -1,9 +1,7 @@
-// Copyright (c) DIGITALL Nature.All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
-
 using System;
 using System.Diagnostics;
 using Digitall.Plugins.Extensions;
+using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
 
 namespace Digitall.Plugins;
@@ -21,8 +19,10 @@ public abstract class PluginSkeleton : IPlugin
     /// <param name="serviceProvider">The service provider.</param>
     public void Execute(IServiceProvider serviceProvider)
     {
+        if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
+
         // Get the logger from the service provider
-        var logger = serviceProvider.GetLoggingFacade();
+        var logger = serviceProvider.GetLogger(ServiceProviderExtensions.LogSink.PluginTelemetry, ServiceProviderExtensions.LogSink.TracingService);
 
         // Start a stopwatch to measure execution time
         var stopwatch = Stopwatch.StartNew();
@@ -33,7 +33,7 @@ public abstract class PluginSkeleton : IPlugin
             var executionContext = serviceProvider.GetExecutionContext();
 
             // Log the start of the execution
-            logger.LogInformation("Execution started {0}: Message {1} - Stage {2} - Mode {3}", GetType().FullName,
+            logger.LogInformation("Execution started {PluginType}: Message {MessageName} - Stage {ExecutionStage} - Mode {ExecutionMode}", GetType().FullName,
                 executionContext.MessageName, executionContext.GetFormattedExecutionStage(),
                 executionContext.GetFormattedExecutionMode());
 
@@ -49,7 +49,7 @@ public abstract class PluginSkeleton : IPlugin
         finally
         {
             // Log the end of the execution and the elapsed time
-            logger.LogInformation("Execution finished in {0} ms", stopwatch.ElapsedMilliseconds);
+            logger.LogInformation("Execution finished in {ElapsedMilliseconds} ms", stopwatch.ElapsedMilliseconds);
         }
     }
 
