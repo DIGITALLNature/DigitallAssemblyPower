@@ -12,7 +12,7 @@ namespace Digitall.APower
         /// <summary>
         /// Encapsulates access to DateTime to facilitate testing of date-dependent code
         /// </summary>
-        public TimeProvider TimeProvider { get; protected set; } = TimeProvider.System;
+        public TimeProvider TimeProvider { get; set; } = TimeProvider.System;
 
         /// <summary>
         /// Executes the plugin using the provided service provider.
@@ -32,8 +32,7 @@ namespace Digitall.APower
                 var executionContext = serviceProvider.GetExecutionContext();
 
                 // Log the start of the execution
-                logger.LogInformation("Execution started {0}: Message {1} - Stage {2} - Mode {3}", GetType().FullName,
-                    executionContext.MessageName, executionContext.GetFormattedExecutionStage(),
+                logger.LogInformation("Execution started {0}: Message {1} - Stage {2} - Mode {3}", GetType().FullName, executionContext.MessageName, executionContext.GetFormattedExecutionStage(),
                     executionContext.GetFormattedExecutionMode());
 
                 // Execute the plugin's internal logic

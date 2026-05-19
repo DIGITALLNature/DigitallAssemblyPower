@@ -130,14 +130,6 @@
         "resolved": "18.5.1",
         "contentHash": "vMFDR1ZjqzzgKmM0zrPie7Gv9Y+ZppjODB5Quzu9Eq0TlIusUfUCYFPEawO91zQuqwzvdFbJSU7WHNtjStffJQ=="
       },
-      "Microsoft.Extensions.TimeProvider.Testing": {
-        "type": "Transitive",
-        "resolved": "10.6.0",
-        "contentHash": "qQDiaYWpvIymGbu+kXaMDS8YdqfeQkv6DOxPF2GSwC+eSzIKqOOnSP34TYt7gKqvB7p8/aSptexnW6nF0CUdnw==",
-        "dependencies": {
-          "Microsoft.Bcl.TimeProvider": "8.0.1"
-        }
-      },
       "Microsoft.SourceLink.Common": {
         "type": "Transitive",
         "resolved": "8.0.0",
@@ -310,8 +302,7 @@
         "type": "Project",
         "dependencies": {
           "Microsoft.CrmSdk.CoreAssemblies": "[9.0.2.60, )",
-          "Microsoft.Extensions.TimeProvider.Testing": "[10.6.0, )",
-          "dgt.apower": "[1.1.0-beta.4, )"
+          "dgt.apower": "[1.1.0-beta.5, )"
         }
       }
     }
