@@ -15,8 +15,7 @@ namespace Digitall.APower
         /// </summary>
         /// <param name="serviceProvider">The service provider.</param>
         /// <returns>The <see cref="IPluginExecutionContext7" />.</returns>
-        public static IPluginExecutionContext7 GetExecutionContext(this IServiceProvider serviceProvider) =>
-            serviceProvider.Get<IPluginExecutionContext7>();
+        public static IPluginExecutionContext7 GetExecutionContext(this IServiceProvider serviceProvider) => serviceProvider.Get<IPluginExecutionContext7>();
 
         /// <summary>
         /// Retrieves the <see cref="IOrganizationService"/> for the current execution context's user.
@@ -57,8 +56,7 @@ namespace Digitall.APower
         /// </summary>
         /// <param name="serviceProvider">The service provider.</param>
         /// <returns>The <see cref="ITracingService"/>.</returns>
-        public static ITracingService GetTracingService(this IServiceProvider serviceProvider) =>
-            serviceProvider.Get<ITracingService>();
+        public static ITracingService GetTracingService(this IServiceProvider serviceProvider) => serviceProvider.Get<ITracingService>();
 
         /// <summary>
         /// Retrieves the <see cref="ILogger"/> from the service provider.
@@ -73,6 +71,14 @@ namespace Digitall.APower
         /// <param name="serviceProvider">The service provider.</param>
         /// <returns>An instance of the <see cref="ISerializerService"/>.</returns>
         public static ISerializerService GetSerializerService(this IServiceProvider serviceProvider) => new SerializerService();
+
+        /// <summary>
+        /// Retrieves the <see cref="TimeProvider"/> from the service provider.
+        /// It should be used when implementing date-dependent logic and enables unit testing
+        /// </summary>
+        /// <param name="serviceProvider">The service provider.</param>
+        /// <returns>The <see cref="TimeProvider"/> instance.</returns>
+        public static TimeProvider GetTimeProvider(this IServiceProvider serviceProvider) => serviceProvider.Get<TimeProvider>() ?? TimeProvider.System;
 
         /// <summary>
         /// Retrieves the <see cref="ILoggingFacade" /> from the service provider.
