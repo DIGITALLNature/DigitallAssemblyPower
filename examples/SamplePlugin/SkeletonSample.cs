@@ -56,9 +56,10 @@ namespace SamplePlugin
             // Get the logging facade from the service provider
             var facade = serviceProvider.GetLoggingFacade();
 
-            // access to DateTime constants via provider
-            var now = TimeProvider.GetLocalNow();
-            var utcNow = TimeProvider.GetUtcNow();
+            // access to DateTimeOffset constants via provider
+            var timeProvider = serviceProvider.GetTimeProvider();
+            var now = timeProvider.GetLocalNow();
+            var utcNow = timeProvider.GetUtcNow();
         }
     }
 }
