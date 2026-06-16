@@ -1,3 +1,15 @@
+# [1.1.0-beta.6](https://github.com/DIGITALLNature/DigitallAssemblyPower/compare/v1.1.0-beta.5...v1.1.0-beta.6) (2026-06-16)
+
+
+### Bug Fixes
+
+* expose TimeProvider for easy usage in unit tests ([470fab9](https://github.com/DIGITALLNature/DigitallAssemblyPower/commit/470fab97b1d401dc2a65292a2d4fa75a4ff182c8))
+
+
+### Features
+
+* expose TimeProvider via IServiceProvider ([b4bb496](https://github.com/DIGITALLNature/DigitallAssemblyPower/commit/b4bb4966a6d26de055f37c0116925d5b08cd2eec))
+
 # [1.1.0-beta.5](https://github.com/DIGITALLNature/DigitallAssemblyPower/compare/v1.1.0-beta.4...v1.1.0-beta.5) (2026-05-19)
 
 
