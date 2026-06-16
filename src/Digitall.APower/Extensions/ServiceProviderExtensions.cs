@@ -74,7 +74,8 @@ namespace Digitall.APower
 
         /// <summary>
         /// Retrieves the <see cref="TimeProvider"/> from the service provider.
-        /// It should be used when implementing date-dependent logic and enables unit testing
+        /// It should be used when implementing date-dependent logic and enables unit testing.
+        /// In Dataverse runtime, this falls back to <see cref="TimeProvider.System"/> when no provider is registered.
         /// </summary>
         /// <param name="serviceProvider">The service provider.</param>
         /// <returns>The <see cref="TimeProvider"/> instance.</returns>
