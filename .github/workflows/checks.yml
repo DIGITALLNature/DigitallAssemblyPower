@@ -1,14 +1,14 @@
-name: Check DGTA
+name: Check Digitall.Plugins
 
 on:
   pull_request:
-    branches: [ "main", "beta" ]
+    branches: ["main", "beta"]
 
 jobs:
   check:
     strategy:
       matrix:
-        os: [ubuntu-22.04, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
     name: Build & Test (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
@@ -17,20 +17,27 @@ jobs:
       contents: read
       checks: write
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-    - name: Restore DotNet
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 9.x
-        cache: true
-        cache-dependency-path: '**/packages.lock.json'
+      - name: Restore DotNet
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.x
+          cache: true
+          cache-dependency-path: "**/packages.lock.json"
 
-    - name: Restore dependencies
-      run: dotnet restore --locked-mode
+      - name: Enable Automated Test Report Artifact Upload
+        uses: actions/github-script@v9
+        with:
+          script: |
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env['ACTIONS_RUNTIME_TOKEN']);
+            core.exportVariable('ACTIONS_RESULTS_URL', process.env['ACTIONS_RESULTS_URL']);
 
-    - name: Build
-      run: dotnet build --no-restore
+      - name: Restore dependencies
+        run: dotnet restore --locked-mode
 
-    - name: Run Tests
-      run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --blame-hang-timeout 3m
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Run Tests
+        run: dotnet test --configuration Release --no-build -- --output Detailed
