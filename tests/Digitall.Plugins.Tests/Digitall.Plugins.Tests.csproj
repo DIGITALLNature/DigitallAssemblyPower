@@ -8,7 +8,7 @@
       <ImplicitUsings>disable</ImplicitUsings>
       <NoWarn>$(NoWarn);NU1701;NU1702</NoWarn>
       <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);MSB3277</MSBuildWarningsAsMessages>
-      <StaticAnalysisCodeType>Test-Tier1</StaticAnalysisCodeType>
+      <StaticAnalysisCodeType>Test</StaticAnalysisCodeType>
       <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
     </PropertyGroup>
 

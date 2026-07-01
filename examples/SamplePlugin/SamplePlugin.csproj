@@ -3,7 +3,7 @@
   <PropertyGroup>
     <IsPackable>true</IsPackable>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <StaticAnalysisCodeType>NonProdLib-Tier1</StaticAnalysisCodeType>
+    <StaticAnalysisCodeType>NonProdLib</StaticAnalysisCodeType>
   </PropertyGroup>
 
   <ItemGroup>
