@@ -1,33 +1,44 @@
-name: Release DGTA
+name: Release Digitall.Plugins
 
 on:
   push:
     branches: [ "main", "beta" ]
+  workflow_dispatch:
 
 jobs:
   release:
     name: Semantic Release
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/beta')
-    runs-on: ubuntu-24.04
+    if: |
+      (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/beta')) ||
+      github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.CI_GITHUB_TOKEN }}
+          fetch-depth: 0
+          fetch-tags: true
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-      - name: Use Node.js
-        uses: actions/setup-node@v6
         with:
-          node-version: 24.x
+          version: 10
+          run_install: false
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'pnpm'
       - name: Restore DotNet
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.x
           cache: true
           cache-dependency-path: '**/packages.lock.json'
       - name: Install packages
-        run: pnpm install
+        run: pnpm install --frozen-lockfile --ignore-scripts
+      - name: Dotnet Restore
+        run: dotnet restore
       - name: Materialize Signing Key
         id: write_sign_key_file
         uses: timheuer/base64-to-file@v1
@@ -39,4 +50,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
           AssemblyOriginatorKeyFile: ${{ steps.write_sign_key_file.outputs.filePath }}
-        run: pnpm exec semantic-release
+        run: npx semantic-release
