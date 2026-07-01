@@ -4,11 +4,12 @@
 using System;
 using System.Diagnostics;
 using Digitall.Plugins.Extensions;
+using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
 
 namespace Digitall.Plugins;
 
-public abstract class PluginSkeleton : IPlugin
+public abstract partial class PluginSkeleton : IPlugin
 {
     /// <summary>
     /// Encapsulates access to DateTime to facilitate testing of date-dependent code
@@ -22,7 +23,7 @@ public abstract class PluginSkeleton : IPlugin
     public void Execute(IServiceProvider serviceProvider)
     {
         // Get the logger from the service provider
-        var logger = serviceProvider.GetLoggingFacade();
+        var logger = serviceProvider.GetLogger(ServiceProviderExtensions.LogSink.PluginTelemetry, ServiceProviderExtensions.LogSink.TracingService);
 
         // Start a stopwatch to measure execution time
         var stopwatch = Stopwatch.StartNew();
@@ -33,9 +34,7 @@ public abstract class PluginSkeleton : IPlugin
             var executionContext = serviceProvider.GetExecutionContext();
 
             // Log the start of the execution
-            logger.LogInformation("Execution started {0}: Message {1} - Stage {2} - Mode {3}", GetType().FullName,
-                executionContext.MessageName, executionContext.GetFormattedExecutionStage(),
-                executionContext.GetFormattedExecutionMode());
+            LogExecutionStart(logger, GetType().FullName, executionContext.MessageName, executionContext.GetFormattedExecutionStage(), executionContext.GetFormattedExecutionMode());
 
             // Execute the plugin's internal logic
             ExecuteInternal(serviceProvider);
@@ -43,15 +42,24 @@ public abstract class PluginSkeleton : IPlugin
         catch (Exception exception)
         {
             // Log any exceptions that occur during execution
-            logger.LogError(exception, "Execution failed");
+            LogExecutionFailed(logger, exception);
             throw;
         }
         finally
         {
             // Log the end of the execution and the elapsed time
-            logger.LogInformation("Execution finished in {0} ms", stopwatch.ElapsedMilliseconds);
+            LogExecutionEnd(logger, stopwatch.ElapsedMilliseconds);
         }
     }
 
     protected abstract void ExecuteInternal(IServiceProvider serviceProvider);
+
+    [LoggerMessage(LogLevel.Information, "Execution started {PluginType}: Message {MessageName} - Stage {ExecutionStage} - Mode {ExecutionMode}")]
+    private static partial void LogExecutionStart(ILogger logger, string pluginType, string messageName, string executionStage, string executionMode);
+
+    [LoggerMessage(LogLevel.Error, "Execution failed")]
+    private static partial void LogExecutionFailed(ILogger logger, Exception exception);
+
+    [LoggerMessage(LogLevel.Information, "Execution finished in {ElapsedMilliseconds} ms")]
+    private static partial void LogExecutionEnd(ILogger logger, long elapsedMilliseconds);
 }

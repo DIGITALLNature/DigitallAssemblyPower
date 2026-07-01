@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
+using Digitall.Plugins.Logging;
 using Digitall.Plugins.Services;
+using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Extensions;
-using Microsoft.Xrm.Sdk.PluginTelemetry;
+using IPluginLogger = Microsoft.Xrm.Sdk.PluginTelemetry.ILogger;
 
 namespace Digitall.Plugins.Extensions;
 
@@ -56,10 +59,11 @@ public static class ServiceProviderExtensions
         public ITracingService GetTracingService() => serviceProvider.Get<ITracingService>();
 
         /// <summary>
-        /// Retrieves the <see cref="ILogger"/> from the service provider.
+        /// Retrieves the <see cref="Microsoft.Xrm.Sdk.PluginTelemetry.ILogger"/> from the service provider.
         /// </summary>
-        /// <returns>The <see cref="ILogger"/>.</returns>
-        public ILogger GetLogger() => serviceProvider.Get<ILogger>();
+        /// <param name="serviceProvider">The service provider.</param>
+        /// <returns>The <see cref="Microsoft.Xrm.Sdk.PluginTelemetry.ILogger"/>.</returns>
+        public IPluginLogger GetLogger() => serviceProvider.Get<IPluginLogger>();
 
         /// <summary>
         /// Retrieves an instance of the <see cref="ISerializerService"/> from the service provider.
@@ -74,12 +78,13 @@ public static class ServiceProviderExtensions
         /// </summary>
         /// <param name="serviceProvider">The service provider.</param>
         /// <returns>The <see cref="TimeProvider"/> instance.</returns>
-        public static TimeProvider GetTimeProvider(this IServiceProvider serviceProvider) => serviceProvider.Get<TimeProvider>() ?? TimeProvider.System;
+        public TimeProvider GetTimeProvider() => serviceProvider.Get<TimeProvider>() ?? TimeProvider.System;
 
         /// <summary>
         /// Retrieves the <see cref="ILoggingFacade" /> from the service provider.
         /// </summary>
         /// <returns>An instance of <see cref="ILoggingFacade" />.</returns>
+        [Obsolete("Use GetLogger(LogSink.PluginTelemetry, LogSink.TracingService) instead to get a Microsoft.Extensions.Logging.ILogger compatible logger which logs to both ILogger and ITracingService.")]
         public ILoggingFacade GetLoggingFacade()
         {
             var tracingService = serviceProvider.GetTracingService();
@@ -92,6 +97,27 @@ public static class ServiceProviderExtensions
         /// </summary>
         /// <returns>An instance of <see cref="IManagedIdentityService" />.</returns>
         public IManagedIdentityService GetManagedIdentityService() => serviceProvider.Get<IManagedIdentityService>();
+
+        /// <summary>
+        /// Retrieves a <see cref="Microsoft.Extensions.Logging.ILogger"/> from the service provider.
+        /// </summary>
+        /// <param name="serviceProvider">The service provider.</param>
+        /// <param name="sinks">The log sinks to use for the logger. If none is provided, <see cref="LogSink.TracingService"/> will be used as a fallback.</param>
+        /// <returns>An instance of <see cref="Microsoft.Extensions.Logging.ILogger"/>.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if no valid log sinks are provided.</exception>
+        public ILogger GetLogger(params LogSink[] sinks)
+        {
+            if (sinks.Length == 0) sinks = [LogSink.TracingService];
+
+            var loggers = sinks.Select<LogSink, ILogger>(sink => sink switch
+            {
+                LogSink.PluginTelemetry => new PluginTelemetryLogger(serviceProvider.GetLogger()),
+                LogSink.TracingService => new TracingServiceLogger(serviceProvider.GetTracingService()),
+                _ => throw new ArgumentOutOfRangeException(nameof(sinks), $"Unsupported log sink: {sink}")
+            }).ToList();
+
+            return loggers.Count == 1 ? loggers[0] : new CompositeLogger(loggers);
+        }
 
         /// <summary>
         /// Registers the proxy types assembly for the <see cref="IOrganizationServiceFactory"/>.
@@ -112,5 +138,11 @@ public static class ServiceProviderExtensions
 
             return serviceProvider;
         }
+    }
+
+    public enum LogSink
+    {
+        PluginTelemetry,
+        TracingService
     }
 }

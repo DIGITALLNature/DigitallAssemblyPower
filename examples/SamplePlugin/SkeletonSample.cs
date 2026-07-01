@@ -51,11 +51,14 @@ namespace SamplePlugin
             // Get the tracing service from the service provider
             var tracing = serviceProvider.GetTracingService();
 
-            // Get the logger from the service provider
-            var logger = serviceProvider.GetLogger();
+            // Get the Dataverse logger from the service provider
+            var logger1 = serviceProvider.GetLogger();
 
-            // Get the logging facade from the service provider
-            var facade = serviceProvider.GetLoggingFacade();
+            // Get a Microsoft.Extensions.Logging.ILogger compatible logger from the service provider
+            // You can specify the log sinks you want to use: Microsoft.Xrm.Sdk.PluginTelemetry.ILogger / Microsoft.Xrm.Sdk.ITracingService / both
+            // The logger logs to every sink specified
+            // If no sinks are specified, TracingService is used as a fallback
+            var logger2 = serviceProvider.GetLogger(ServiceProviderExtensions.LogSink.PluginTelemetry, ServiceProviderExtensions.LogSink.TracingService);
 
             // Get the managed identity service from the service provider
             var miService = serviceProvider.GetManagedIdentityService();
