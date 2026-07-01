@@ -64,7 +64,7 @@
 		],
 		"includeSymbols": true,
 		"projectPath": [
-			"src/Digitall.APower/Digitall.APower.csproj"
+			"src/Digitall.Plugins/Digitall.Plugins.csproj"
 		],
 		"npmPublish": false,
 		"usePackageVersion": true

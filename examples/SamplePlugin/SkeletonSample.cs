@@ -25,8 +25,8 @@ namespace SamplePlugin
             var executionMode = executionContext.GetFormattedExecutionMode();
             var executionStage = executionContext.GetFormattedExecutionStage();
 
-            // Get the input parameter "TODO" from the execution context and store it in tmp variable
-            executionContext.GetInputParameter("TODO", out EntityReference tmp);
+            // Get the input parameter "SampleInput" from the execution context and store it in tmp variable
+            executionContext.GetInputParameter("SampleInput", out EntityReference tmp);
 
             // Set the output parameter "Result" to 123 in the execution context
             executionContext.SetOutputParameter("Result", 123);

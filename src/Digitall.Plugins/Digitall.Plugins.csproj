@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <PackageId>Digitall.Plugins</PackageId>
+    <StaticAnalysisCodeType>ProdLib</StaticAnalysisCodeType>
+    <StaticAnalysisCodeType>ProdLib</StaticAnalysisCodeType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,8 +14,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.8" />
-    <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" Version="9.6.0" />
-  </ItemGroup>
+<PackageReference Include="Microsoft.Extensions.StaticAnalysis" Version="10.7.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+      </ItemGroup>
 
   <ItemGroup>
     <Reference Include="System.Runtime.Caching"/>
