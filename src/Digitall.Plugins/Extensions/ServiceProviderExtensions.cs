@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using Digitall.Plugins.Logging;
@@ -113,7 +114,7 @@ public static class ServiceProviderExtensions
             {
                 LogSink.PluginTelemetry => new PluginTelemetryLogger(serviceProvider.GetLogger()),
                 LogSink.TracingService => new TracingServiceLogger(serviceProvider.GetTracingService()),
-                _ => throw new ArgumentOutOfRangeException(nameof(sinks), $"Unsupported log sink: {sink}")
+                _ => throw new ArgumentOutOfRangeException(nameof(sink), $"Unsupported log sink: {sink}")
             }).ToList();
 
             return loggers.Count == 1 ? loggers[0] : new CompositeLogger(loggers);
@@ -130,6 +131,7 @@ public static class ServiceProviderExtensions
         /// </remarks>
         /// <param name="assembly">The assembly containing the proxy types.</param>
         /// <returns>The service provider.</returns>
+        [SuppressMessage("Major Code Smell", "S3011", Justification = "Dataverse plugin runtime requires setting ProxyTypesAssembly via reflection.")]
         public IServiceProvider RegisterProxyTypesAssembly(Assembly assembly)
         {
             var factory = serviceProvider.Get<IOrganizationServiceFactory>();
