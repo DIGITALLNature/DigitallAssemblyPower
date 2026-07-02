@@ -167,7 +167,7 @@ public class LoggingTests
         // BeginScope must always return a non-null IDisposable (no-op when no children support scoping)
         var scope = composite.BeginScope("test-scope");
         await Assert.That(scope).IsNotNull();
-        scope.Dispose();
+        scope!.Dispose();
     }
 
     // ── LoggingFacade via real ServiceProvider (integration) ──────────────────
