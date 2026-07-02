@@ -23,12 +23,11 @@ internal sealed class NoopTracingService : ITracingService
 
 public class LoggingTests
 {
-    private static (IServiceProvider Sp, IPluginLogger PluginLogger, ITracingService TracingService) BuildDependencies()
+    private static (IServiceProvider Sp, IPluginLogger PluginLogger) BuildDependencies()
     {
         var sp = new PluginExecutionContextBuilder(new FakeOrganizationService()).BuildServiceProvider();
         var pluginLogger = (IPluginLogger)sp.GetService(typeof(IPluginLogger));
-        var tracingService = (ITracingService)sp.GetService(typeof(ITracingService));
-        return (sp, pluginLogger, tracingService);
+        return (sp, pluginLogger);
     }
 
     // ── LoggingFacade ──────────────────────────────────────────────────────────
@@ -37,7 +36,7 @@ public class LoggingTests
     public async Task LoggingFacade_Log_WritesToTracingService()
     {
         var tracing = new NoopTracingService();
-        var (_, pluginLogger, _) = BuildDependencies();
+        var (_, pluginLogger) = BuildDependencies();
         var facade = new LoggingFacade(tracing, pluginLogger);
 
         facade.LogInformation("Hello {0}", "world");
@@ -50,7 +49,7 @@ public class LoggingTests
     public async Task LoggingFacade_LogWithNullException_DoesNotThrow()
     {
         var tracing = new NoopTracingService();
-        var (_, pluginLogger, _) = BuildDependencies();
+        var (_, pluginLogger) = BuildDependencies();
         var facade = new LoggingFacade(tracing, pluginLogger);
 
         facade.Log(XrmLogLevel.Warning, null, "message without exception");
@@ -62,7 +61,7 @@ public class LoggingTests
     public async Task LoggingFacade_LogWithException_IncludesExceptionDetails()
     {
         var tracing = new NoopTracingService();
-        var (_, pluginLogger, _) = BuildDependencies();
+        var (_, pluginLogger) = BuildDependencies();
         var facade = new LoggingFacade(tracing, pluginLogger);
         var ex = new InvalidOperationException("test-error");
 
@@ -100,7 +99,7 @@ public class LoggingTests
         var tracing = new NoopTracingService();
         var logger = new TracingServiceLogger(tracing);
 
-        logger.Log(LogLevel.Warning, default, "state", null, (s, e) => s);
+        logger.Log(LogLevel.Warning, default, "state", null, (s, _) => s);
 
         await Assert.That(tracing.LastTrace).IsNotNull();
     }
@@ -110,7 +109,7 @@ public class LoggingTests
     [Test]
     public async Task PluginTelemetryLogger_IsEnabled_ReturnsExpectedResult()
     {
-        var (_, pluginLogger, _) = BuildDependencies();
+        var (_, pluginLogger) = BuildDependencies();
         var logger = new PluginTelemetryLogger(pluginLogger);
 
         // FakeDataverse.Testing's plugin logger should be enabled for standard levels
@@ -119,9 +118,9 @@ public class LoggingTests
     }
 
     [Test]
-    public async Task PluginTelemetryLogger_Log_DoesNotThrow()
+    public void PluginTelemetryLogger_Log_DoesNotThrow()
     {
-        var (_, pluginLogger, _) = BuildDependencies();
+        var (_, pluginLogger) = BuildDependencies();
         var logger = new PluginTelemetryLogger(pluginLogger);
 
         logger.LogInformation("message from telemetry logger");
@@ -159,7 +158,7 @@ public class LoggingTests
     }
 
     [Test]
-    public async Task CompositeLogger_BeginScope_HandlesNullChildScopes()
+    public void CompositeLogger_BeginScope_HandlesNullChildScopes()
     {
         var composite = new CompositeLogger([
             new TracingServiceLogger(new NoopTracingService())
@@ -175,7 +174,7 @@ public class LoggingTests
     [Test]
     public async Task GetLoggingFacade_ViaServiceProvider_ReturnsWorkingFacade()
     {
-        var (sp, _, _) = BuildDependencies();
+        var (sp, _) = BuildDependencies();
 
 #pragma warning disable CS0618 // Obsolete: only using in test to verify the legacy path still works
         var facade = sp.GetLoggingFacade();

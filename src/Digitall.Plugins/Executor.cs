@@ -6,6 +6,8 @@ using Digitall.Plugins.Extensions;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 // ReSharper disable UnusedMember.Global
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable MemberCanBeProtected.Global
 
 namespace Digitall.Plugins;
 
@@ -63,7 +65,7 @@ public abstract class Executor : IPlugin
         Result = inner.Result;
     }
 
-    public IServiceProvider ServiceProvider { get; set; }
+    public IServiceProvider ServiceProvider { get; private set; }
 
     public IPluginExecutionContext Core => ServiceProvider.GetExecutionContext();
 

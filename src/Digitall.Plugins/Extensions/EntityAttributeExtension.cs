@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.Xrm.Sdk;
 // ReSharper disable UnusedMember.Global
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace Digitall.Plugins.Extensions;
 

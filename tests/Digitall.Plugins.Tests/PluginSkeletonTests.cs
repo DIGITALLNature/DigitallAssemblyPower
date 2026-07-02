@@ -17,7 +17,7 @@ public class PluginSkeletonTests
     {
         public bool ExecuteInternalCalled { get; private set; }
         public IServiceProvider LastServiceProvider { get; private set; }
-        public bool ShouldThrow { get; set; }
+        public bool ShouldThrow { get; init; }
 
         public void SetTimeProvider(TimeProvider tp) => TimeProvider = tp;
 
