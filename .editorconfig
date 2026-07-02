@@ -169,6 +169,10 @@ dotnet_diagnostic.CA1708.severity = none
 [examples/SamplePlugin/SampleModel/*.cs]
 generated_code = true
 
+# Test code: magic numbers in [Arguments] attributes are intentional and self-documenting
+[tests/**/*.cs]
+dotnet_diagnostic.S109.severity = none
+
 # C++ Files
 [*.{cpp,h,in}]
 curly_bracket_next_line = true

@@ -33,7 +33,7 @@ namespace SamplePlugin
             }
             catch (FaultException<OrganizationServiceFault> orgServiceFault)
             {
-                tracing.Trace($"Exception: {orgServiceFault.ToString()}");
+                tracing.Trace($"Exception: {orgServiceFault}");
 
                 throw new InvalidPluginExecutionException($"OrganizationServiceFault: {orgServiceFault.Message}", orgServiceFault);
             }
