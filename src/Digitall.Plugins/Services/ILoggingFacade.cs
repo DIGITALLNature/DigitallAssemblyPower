@@ -1,5 +1,7 @@
 ﻿using System;
 using Microsoft.Xrm.Sdk.PluginTelemetry;
+// ReSharper disable UnusedMemberInSuper.Global
+// ReSharper disable UnusedMember.Global
 
 namespace Digitall.Plugins.Services;
 

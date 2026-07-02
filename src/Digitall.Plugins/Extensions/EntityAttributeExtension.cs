@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Microsoft.Xrm.Sdk;
+// ReSharper disable UnusedMember.Global
 
 namespace Digitall.Plugins.Extensions;
 
@@ -53,7 +54,7 @@ public static class EntityAttributeExtension
         /// <returns></returns>
         public T MergeEntity<T>() where T : Entity => executor.Core.MergeEntity<T>();
     }
-    
+
     /// <param name="pluginExecutionContext">self</param>
     extension(IPluginExecutionContext pluginExecutionContext)
     {

@@ -8,8 +8,6 @@ using Digitall.Dataverse.Testing.Extensions;
 using Digitall.Plugins.Extensions;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
-using TUnit.Assertions;
-using TUnit.Assertions.Extensions;
 
 namespace Digitall.Plugins.Tests.Extensions;
 
@@ -27,9 +25,11 @@ public class PluginExecutionContextExtensionsTests
     private static IPluginExecutionContext7 BuildContextWithStage(int stage, int mode = 0)
     {
         var service = new FakeOrganizationService();
-        var builder = new PluginExecutionContextBuilder(service);
-        builder.Stage = stage;
-        builder.Mode = mode;
+        var builder = new PluginExecutionContextBuilder(service)
+        {
+            Stage = stage,
+            Mode = mode
+        };
         return (IPluginExecutionContext7)builder.BuildServiceProvider().GetService(typeof(IPluginExecutionContext7));
     }
 

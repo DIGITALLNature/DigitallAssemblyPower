@@ -5,6 +5,7 @@ using System;
 using System.ServiceModel;
 using Digitall.Plugins.Extensions;
 using Microsoft.Xrm.Sdk;
+// ReSharper disable UnusedType.Global
 
 namespace SamplePlugin
 {

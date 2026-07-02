@@ -5,13 +5,16 @@ using System;
 using Digitall.Plugins.Extensions;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
+// ReSharper disable UnusedMember.Global
 
 namespace Digitall.Plugins;
 
 public abstract class Executor : IPlugin
 {
+    // ReSharper disable UnusedAutoPropertyAccessor.Global
     public string SecureConfig { get; }
     public string UnsecureConfig { get; }
+    // ReSharper restore UnusedAutoPropertyAccessor.Global
 
     /// <summary>
     /// </summary>

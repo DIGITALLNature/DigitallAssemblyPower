@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using Digitall.Dataverse.Testing;
 using Digitall.Dataverse.Testing.Extensions;
 using Microsoft.Xrm.Sdk;
-using TUnit.Assertions;
-using TUnit.Assertions.Extensions;
 
 namespace Digitall.Plugins.Tests;
 
@@ -79,8 +77,10 @@ public class ExecutorTests
     [Test]
     public async Task Execute_WhenInvalidPluginExceptionStatusSucceeded_Rethrows_WithOkResult()
     {
-        var executor = new RecordingExecutor();
-        executor.OnExecute = () => throw new InvalidPluginExecutionException(OperationStatus.Succeeded, "ok-flow");
+        var executor = new RecordingExecutor
+        {
+            OnExecute = () => throw new InvalidPluginExecutionException(OperationStatus.Succeeded, "ok-flow")
+        };
         var sp = BuildServiceProvider(new Entity("account") { Id = Guid.NewGuid() });
 
         var ex = await Assert.That(() => executor.Execute(sp)).ThrowsException();
@@ -91,8 +91,10 @@ public class ExecutorTests
     [Test]
     public async Task Execute_WhenInvalidPluginExceptionStatusFailed_Rethrows_WithFailureResult()
     {
-        var executor = new RecordingExecutor();
-        executor.OnExecute = () => throw new InvalidPluginExecutionException("failure");
+        var executor = new RecordingExecutor
+        {
+            OnExecute = () => throw new InvalidPluginExecutionException("failure")
+        };
         var sp = BuildServiceProvider(new Entity("account") { Id = Guid.NewGuid() });
 
         var ex = await Assert.That(() => executor.Execute(sp)).ThrowsException();
@@ -103,8 +105,10 @@ public class ExecutorTests
     [Test]
     public async Task Execute_WhenArbitraryExceptionThrown_Rethrows_WithFailureResult()
     {
-        var executor = new RecordingExecutor();
-        executor.OnExecute = () => throw new InvalidOperationException("unexpected");
+        var executor = new RecordingExecutor
+        {
+            OnExecute = () => throw new InvalidOperationException("unexpected")
+        };
         var sp = BuildServiceProvider(new Entity("account") { Id = Guid.NewGuid() });
 
         var ex = await Assert.That(() => executor.Execute(sp)).ThrowsException();

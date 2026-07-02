@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.Xrm.Sdk.Query;
+// ReSharper disable UnusedMember.Global
 
 namespace Digitall.Plugins.Extensions;
 
@@ -50,8 +51,10 @@ public static class EnvironmentVariablesExtension
         if (environmentVariableDefinition != null)
         {
             // Create a QueryExpression to retrieve the EnvironmentVariableValue entity
-            var variableQuery = new QueryExpression("environmentvariablevalue");
-            variableQuery.NoLock = true;
+            var variableQuery = new QueryExpression("environmentvariablevalue")
+            {
+                NoLock = true
+            };
             variableQuery.ColumnSet.AddColumn("value");
             variableQuery.Criteria.AddCondition("environmentvariabledefinitionid", ConditionOperator.Equal, environmentVariableDefinition.Id);
 

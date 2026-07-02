@@ -7,6 +7,8 @@ using Digitall.Plugins;
 using Digitall.Plugins.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
+// ReSharper disable UnusedVariable
+// ReSharper disable UnusedType.Global
 
 namespace SamplePlugin
 {

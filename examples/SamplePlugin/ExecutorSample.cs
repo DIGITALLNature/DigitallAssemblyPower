@@ -2,6 +2,8 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using Digitall.Plugins;
+// ReSharper disable UnusedVariable
+// ReSharper disable UnusedType.Global
 
 namespace SamplePlugin
 {
