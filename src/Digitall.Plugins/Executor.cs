@@ -2,6 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System;
+using System.Linq;
 using Digitall.Plugins.Extensions;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
@@ -114,6 +115,12 @@ public abstract class Executor : IPlugin
     public Entity Entity => Core.GetTarget<Entity>();
 
     /// <summary>
+    /// The target entities of the context.
+    /// </summary>
+    /// <remarks>Only available when registering the plugin on CreateMultiple or UpdateMultiple.</remarks>
+    public EntityCollection GetEntities() => new(Core.GetTargets<Entity>().ToList());
+
+    /// <summary>
     ///     The target entity reference of the context.
     /// </summary>
     public EntityReference EntityReference => Core.GetTarget();
@@ -204,9 +211,21 @@ public abstract class Executor : IPlugin
     public Entity PreEntityImage => Core.GetPreImage<Entity>();
 
     /// <summary>
+    /// The "PreImage" pre-entity images; see Plugin Registration
+    /// </summary>
+    /// <remarks>Only available when registering the plugin on CreateMultiple or UpdateMultiple.</remarks>
+    public EntityCollection GetPreEntityImages() => new(Core.GetPreImages<Entity>().ToList());
+
+    /// <summary>
     ///     The "PostImage" post-entity image; see Plugin Registration
     /// </summary>
     public Entity PostEntityImage => Core.GetPostImage<Entity>();
+
+    /// <summary>
+    /// The "PostImage" post-entity images; see Plugin Registration
+    /// </summary>
+    /// <remarks>Only available when registering the plugin on CreateMultiple or UpdateMultiple.</remarks>
+    public EntityCollection GetPostEntityImages() => new(Core.GetPostImages<Entity>().ToList());
 
     /// <summary>
     ///     Get column set from execution context.

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
@@ -27,6 +28,20 @@ public static class PluginExecutionContextExtensions
             if (context.GetInputParameter("Target", out Entity target)) return target.ToEntity<TEntity>();
 
             return null;
+        }
+
+        /// <summary>
+        /// Retrieves the list of target entities from the plugin execution context.
+        /// </summary>
+        /// <remarks>Only available when registering the plugin on CreateMultiple or UpdateMultiple.</remarks>
+        /// <typeparam name="TEntity">The type of the entities to retrieve.</typeparam>
+        /// <returns>A list of entities of the specified type, or an empty list if the "Targets" input parameter is not present.</returns>
+        public IReadOnlyList<TEntity> GetTargets<TEntity>() where TEntity : Entity
+        {
+            if (context.GetInputParameter("Targets", out EntityCollection targets))
+                return targets.Entities.Select(e => e.ToEntity<TEntity>()).ToList().AsReadOnly();
+
+            return [];
         }
 
         public EntityReference GetTarget()
@@ -123,11 +138,39 @@ public static class PluginExecutionContextExtensions
             return null;
         }
 
+        /// <summary>
+        /// Retrieves a list of pre-images from the plugin execution context for the specified image name.
+        /// </summary>
+        /// <remarks>Only available when registering the plugin on CreateMultiple or UpdateMultiple.</remarks>
+        /// <typeparam name="TEntity">The type of the entities contained in the pre-images.</typeparam>
+        /// <param name="name">The name of the pre-image collection. Defaults to "PreImage".</param>
+        /// <returns>A list of entities of type <typeparamref name="TEntity"/> representing the pre-images, or an empty list if none are found.</returns>
+        public IReadOnlyList<TEntity> GetPreImages<TEntity>(string name = "PreImage") where TEntity : Entity
+        {
+            if (context is not IPluginExecutionContext4 context4) return [];
+
+            return context4.PreEntityImagesCollection.Where(x => x.ContainsKey(name)).Select(x => x[name].ToEntity<TEntity>()).ToList().AsReadOnly();
+        }
+
         public TEntity GetPostImage<TEntity>(string name = "PostImage") where TEntity : Entity
         {
             if (context.PostEntityImages.TryGetValue(name, out var postImage)) return postImage.ToEntity<TEntity>();
 
             return null;
+        }
+
+        /// <summary>
+        /// Retrieves a collection of post-images from the plugin execution context.
+        /// </summary>
+        /// <remarks>Only available when registering the plugin on CreateMultiple or UpdateMultiple.</remarks>
+        /// <typeparam name="TEntity">The type of the entities in the post-image collection.</typeparam>
+        /// <param name="name">The name of the post-image collection to retrieve. Defaults to "PostImage".</param>
+        /// <returns>A list of entities of the specified type from the post-image collection, or an empty list if not found.</returns>
+        public IReadOnlyList<TEntity> GetPostImages<TEntity>(string name = "PostImage") where TEntity : Entity
+        {
+            if (context is not IPluginExecutionContext4 context4) return [];
+
+            return context4.PostEntityImagesCollection.Where(x => x.ContainsKey(name)).Select(x => x[name].ToEntity<TEntity>()).ToList().AsReadOnly();
         }
 
         public string GetFormattedExecutionStage() =>
