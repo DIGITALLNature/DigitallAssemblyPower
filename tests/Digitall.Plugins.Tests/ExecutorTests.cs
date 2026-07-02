@@ -61,6 +61,16 @@ public class ExecutorTests
         return builder.BuildServiceProvider();
     }
 
+    // ── Null guard ────────────────────────────────────────────────────────────
+
+    [Test]
+    public async Task Execute_WithNullServiceProvider_ThrowsArgumentNullException()
+    {
+        var executor = new RecordingExecutor();
+        var ex = await Assert.That(() => executor.Execute(null)).ThrowsException();
+        await Assert.That(ex).IsTypeOf<ArgumentNullException>();
+    }
+
     // ── Happy path ────────────────────────────────────────────────────────────
 
     [Test]

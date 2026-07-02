@@ -39,6 +39,8 @@ public abstract class Executor : IPlugin
     /// <param name="serviceProvider"></param>
     public void Execute(IServiceProvider serviceProvider)
     {
+        if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
+
         //follow the "stateless" recommendation of Microsoft
         var inner = (Executor)MemberwiseClone();
         inner.ServiceProvider = serviceProvider;
