@@ -22,6 +22,7 @@ public abstract partial class PluginSkeleton : IPlugin
     /// <param name="serviceProvider">The service provider.</param>
     public void Execute(IServiceProvider serviceProvider)
     {
+        if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
         // Get the logger from the service provider
         var logger = serviceProvider.GetLogger(ServiceProviderExtensions.LogSink.PluginTelemetry, ServiceProviderExtensions.LogSink.TracingService);
 

@@ -135,7 +135,7 @@ public async Task MethodName_Scenario_ExpectedResult()
 ```bash
 dotnet restore              # Restore dependencies (uses lock files)
 dotnet build                # Build the solution
-dotnet run --project tests/Digitall.Plugins.Tests/Digitall.Plugins.Tests.csproj  # Run tests via TUnit host
+dotnet run --project tests/Digitall.Plugins.Tests/Digitall.Plugins.Tests.csproj -f net10.0  # Run tests via TUnit host
 dotnet test                 # Run all tests
 ```
 

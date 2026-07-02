@@ -17,6 +17,7 @@ namespace SamplePlugin
         /// <param name="serviceProvider">The service provider.</param>
         protected override void ExecuteInternal(IServiceProvider serviceProvider)
         {
+            if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
             // Get the execution context from the service provider
             var executionContext = serviceProvider.GetExecutionContext();
 
@@ -27,8 +28,9 @@ namespace SamplePlugin
             // Get the input parameter "SampleInput" from the execution context and store it in tmp variable
             executionContext.GetInputParameter("SampleInput", out EntityReference tmp);
 
-            // Set the output parameter "Result" to 123 in the execution context
-            executionContext.SetOutputParameter("Result", 123);
+            // Set the output parameter "Result" to a sample value in the execution context
+            const int sampleResultValue = 123;
+            executionContext.SetOutputParameter("Result", sampleResultValue);
 
             // Get the target entity from the execution context and cast it to an Account
             var account = executionContext.GetTarget<Account>();

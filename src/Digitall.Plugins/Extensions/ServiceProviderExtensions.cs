@@ -85,7 +85,9 @@ public static class ServiceProviderExtensions
         /// Retrieves the <see cref="ILoggingFacade" /> from the service provider.
         /// </summary>
         /// <returns>An instance of <see cref="ILoggingFacade" />.</returns>
-        [Obsolete("Use GetLogger(LogSink.PluginTelemetry, LogSink.TracingService) instead to get a Microsoft.Extensions.Logging.ILogger compatible logger which logs to both ILogger and ITracingService.")]
+        [Obsolete(
+            "Use GetLogger(LogSink.PluginTelemetry, LogSink.TracingService) instead to get a " +
+            "Microsoft.Extensions.Logging.ILogger compatible logger which logs to both ILogger and ITracingService.")]
         public ILoggingFacade GetLoggingFacade()
         {
             var tracingService = serviceProvider.GetTracingService();
@@ -108,6 +110,7 @@ public static class ServiceProviderExtensions
         /// <exception cref="ArgumentOutOfRangeException">Thrown if no valid log sinks are provided.</exception>
         public ILogger GetLogger(params LogSink[] sinks)
         {
+            if (sinks == null) throw new ArgumentNullException(nameof(sinks));
             if (sinks.Length == 0) sinks = [LogSink.TracingService];
 
             var loggers = sinks.Select<LogSink, ILogger>(sink => sink switch
