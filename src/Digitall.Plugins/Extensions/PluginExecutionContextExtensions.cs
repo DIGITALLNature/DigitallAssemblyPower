@@ -122,7 +122,8 @@ public static class PluginExecutionContextExtensions
                 columnSet ??= new ColumnSet(XDocument.Load(xmlReader)
                     .Descendants("attribute")
                     .Select(d => d.Attribute("name"))
-                    .Select(e => e.Value)
+                    .Where(e => e is not null)
+                    .Select(e => e!.Value)
                     .ToArray());
 
                 return true;

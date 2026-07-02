@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
 
+// ReSharper disable MemberCanBePrivate.Global
 namespace Digitall.Plugins.Services;
 
 public sealed class SerializerService : ISerializerService

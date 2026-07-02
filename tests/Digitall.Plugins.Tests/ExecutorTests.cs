@@ -26,7 +26,7 @@ public class ExecutorTests
         }
 
         private readonly SharedState _shared = new();
-        public Func<ExecutionResult> OnExecute { get; set; } = () => ExecutionResult.Ok;
+        public Func<ExecutionResult> OnExecute { get; init; } = () => ExecutionResult.Ok;
 
         public ExecutionResult CapturedExceptionResult => _shared.ExceptionResult;
         public IOrganizationService CapturedSecured => _shared.Secured;
