@@ -2,6 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Runtime.Serialization.Json;
+// ReSharper disable UnusedMemberInSuper.Global
 
 namespace Digitall.Plugins.Services;
 

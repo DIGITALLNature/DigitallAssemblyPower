@@ -7,8 +7,6 @@ using Digitall.Dataverse.Testing;
 using Digitall.Dataverse.Testing.Extensions;
 using Digitall.Plugins.Extensions;
 using Microsoft.Xrm.Sdk.Metadata;
-using TUnit.Assertions;
-using TUnit.Assertions.Extensions;
 
 namespace Digitall.Plugins.Tests.Extensions;
 

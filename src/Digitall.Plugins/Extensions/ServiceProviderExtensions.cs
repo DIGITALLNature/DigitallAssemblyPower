@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Extensions;
 using IPluginLogger = Microsoft.Xrm.Sdk.PluginTelemetry.ILogger;
+// ReSharper disable UnusedMember.Global
 
 namespace Digitall.Plugins.Extensions;
 
@@ -62,7 +63,6 @@ public static class ServiceProviderExtensions
         /// <summary>
         /// Retrieves the <see cref="Microsoft.Xrm.Sdk.PluginTelemetry.ILogger"/> from the service provider.
         /// </summary>
-        /// <param name="serviceProvider">The service provider.</param>
         /// <returns>The <see cref="Microsoft.Xrm.Sdk.PluginTelemetry.ILogger"/>.</returns>
         public IPluginLogger GetLogger() => serviceProvider.Get<IPluginLogger>();
 
@@ -77,7 +77,6 @@ public static class ServiceProviderExtensions
         /// It should be used when implementing date-dependent logic and enables unit testing.
         /// In Dataverse runtime, this falls back to <see cref="TimeProvider.System"/> when no provider is registered.
         /// </summary>
-        /// <param name="serviceProvider">The service provider.</param>
         /// <returns>The <see cref="TimeProvider"/> instance.</returns>
         public TimeProvider GetTimeProvider() => serviceProvider.Get<TimeProvider>() ?? TimeProvider.System;
 
@@ -104,7 +103,6 @@ public static class ServiceProviderExtensions
         /// <summary>
         /// Retrieves a <see cref="Microsoft.Extensions.Logging.ILogger"/> from the service provider.
         /// </summary>
-        /// <param name="serviceProvider">The service provider.</param>
         /// <param name="sinks">The log sinks to use for the logger. If none is provided, <see cref="LogSink.TracingService"/> will be used as a fallback.</param>
         /// <returns>An instance of <see cref="Microsoft.Extensions.Logging.ILogger"/>.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if no valid log sinks are provided.</exception>

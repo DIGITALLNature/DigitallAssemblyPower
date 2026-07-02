@@ -6,6 +6,8 @@ using dgt.Model.Dataverse;
 using Digitall.Plugins;
 using Digitall.Plugins.Extensions;
 using Microsoft.Xrm.Sdk;
+// ReSharper disable UnusedVariable
+// ReSharper disable UnusedType.Global
 
 namespace SamplePlugin
 {

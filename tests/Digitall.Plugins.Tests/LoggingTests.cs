@@ -9,8 +9,6 @@ using Microsoft.Extensions.Logging;
 using Digitall.Plugins.Logging;
 using Digitall.Plugins.Services;
 using Microsoft.Xrm.Sdk;
-using TUnit.Assertions;
-using TUnit.Assertions.Extensions;
 using IPluginLogger = Microsoft.Xrm.Sdk.PluginTelemetry.ILogger;
 using XrmLogLevel = Microsoft.Xrm.Sdk.PluginTelemetry.LogLevel;
 
