@@ -98,7 +98,7 @@ public class ServiceProviderExtensionsTests
     [Test]
     public async Task GetSerializerService_ReturnsNewSerializerServiceInstance()
     {
-        var serializer = IServiceProvider.GetSerializerService();
+        var serializer = BuildServiceProvider().GetSerializerService();
 
         await Assert.That(serializer).IsNotNull();
         await Assert.That(serializer).IsTypeOf<SerializerService>();

@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
@@ -70,7 +73,8 @@ public static class ServiceProviderExtensions
         /// Retrieves an instance of the <see cref="ISerializerService"/> from the service provider.
         /// </summary>
         /// <returns>An instance of the <see cref="ISerializerService"/>.</returns>
-        public static ISerializerService GetSerializerService() => new SerializerService();
+        [SuppressMessage("Performance", "CA1822")]
+        public ISerializerService GetSerializerService() => new SerializerService();
 
         /// <summary>
         /// Retrieves the <see cref="TimeProvider"/> from the service provider.

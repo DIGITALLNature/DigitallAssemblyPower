@@ -4,8 +4,8 @@
     <Company>DIGITALL Nature GmbH</Company>
     <Copyright>Copyright (c) DIGITALL Nature GmbH 2024</Copyright>
     <Authors>Marcel Kummerow</Authors>
-    <Product>Digitall Assembly Power</Product>
-    <PackageLicenseExpression>MS-RL</PackageLicenseExpression>
+    <Product>Digitall.Plugins</Product>
+    <PackageLicenseExpression>MS-PL</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/DIGITALLNature/DigitallAssemblyPower</PackageProjectUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>

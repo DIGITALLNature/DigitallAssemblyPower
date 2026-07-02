@@ -1,4 +1,7 @@
-﻿using System;
+// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System;
 using System.Linq;
 using Microsoft.Xrm.Sdk.Query;
 // ReSharper disable UnusedMember.Global
@@ -45,7 +48,8 @@ public static class EnvironmentVariablesExtension
         definitionQuery.Criteria.AddCondition("schemaname", ConditionOperator.Equal, key);
 
         // Retrieve the EnvironmentVariableDefinition entity using the organization service
-        var environmentVariableDefinition = serviceProvider.GetElevatedOrganizationService().RetrieveMultiple(definitionQuery).Entities.SingleOrDefault();
+        var organizationService = serviceProvider.GetElevatedOrganizationService();
+        var environmentVariableDefinition = organizationService.RetrieveMultiple(definitionQuery).Entities.SingleOrDefault();
 
         // If the EnvironmentVariableDefinition entity is found
         if (environmentVariableDefinition != null)
@@ -59,7 +63,7 @@ public static class EnvironmentVariablesExtension
             variableQuery.Criteria.AddCondition("environmentvariabledefinitionid", ConditionOperator.Equal, environmentVariableDefinition.Id);
 
             // Retrieve the EnvironmentVariableValue entity using the organization service
-            var environmentVariableValue = serviceProvider.GetElevatedOrganizationService().RetrieveMultiple(variableQuery).Entities.SingleOrDefault();
+            var environmentVariableValue = organizationService.RetrieveMultiple(variableQuery).Entities.SingleOrDefault();
 
             // If the EnvironmentVariableValue entity is found
             if (environmentVariableValue != null)
