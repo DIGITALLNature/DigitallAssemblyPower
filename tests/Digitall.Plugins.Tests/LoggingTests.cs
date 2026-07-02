@@ -158,15 +158,16 @@ public class LoggingTests
     }
 
     [Test]
-    public void CompositeLogger_BeginScope_HandlesNullChildScopes()
+    public async Task CompositeLogger_BeginScope_ReturnsNonNullScope()
     {
         var composite = new CompositeLogger([
             new TracingServiceLogger(new NoopTracingService())
         ]);
 
-        // TracingServiceLogger.BeginScope returns null — CompositeLogger must handle that
+        // BeginScope must always return a non-null IDisposable (no-op when no children support scoping)
         var scope = composite.BeginScope("test-scope");
-        scope?.Dispose();
+        await Assert.That(scope).IsNotNull();
+        scope.Dispose();
     }
 
     // ── LoggingFacade via real ServiceProvider (integration) ──────────────────

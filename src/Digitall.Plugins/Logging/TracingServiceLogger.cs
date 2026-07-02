@@ -21,5 +21,5 @@ internal sealed class TracingServiceLogger(ITracingService tracingService) : ILo
         if (exception != null) tracingService.Trace(exception.ToString());
     }
 
-    public IDisposable BeginScope<TState>(TState state) where TState : notnull => null;
+    public IDisposable BeginScope<TState>(TState state) where TState : notnull => NoopDisposable.Instance;
 }

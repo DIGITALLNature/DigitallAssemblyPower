@@ -24,7 +24,7 @@ internal sealed class CompositeLogger(IReadOnlyList<ILogger> loggers) : ILogger
     {
         var scopes = loggers.Select(l => l.BeginScope(state)).Where(s => s != null).ToList();
 
-        return scopes.Count == 0 ? null : new CompositeDisposable(scopes);
+        return scopes.Count == 0 ? NoopDisposable.Instance : new CompositeDisposable(scopes);
     }
 
     private sealed class CompositeDisposable(IList<IDisposable> disposables) : IDisposable
