@@ -1,3 +1,30 @@
+# [2.0.0-beta.1](https://github.com/DIGITALLNature/DigitallAssemblyPower/compare/v1.1.0-beta.6...v2.0.0-beta.1) (2026-07-02)
+
+
+* feat!: standardize namespaces ([0866532](https://github.com/DIGITALLNature/DigitallAssemblyPower/commit/08665322cf2f7415ca91421c05186a0d209b10aa))
+
+
+### Bug Fixes
+
+* address PR review feedback on null safety and scope handling ([44841c9](https://github.com/DIGITALLNature/DigitallAssemblyPower/commit/44841c9bb1cbe38f4f5237ab62e7d4046eddfcfa))
+* address Qodana static analysis issues ([db58f78](https://github.com/DIGITALLNature/DigitallAssemblyPower/commit/db58f7854f31d306d7a4b4886177eb88775db1f4))
+* resolve all static analyzer errors and suppress C# 14 extension false positives ([86797c0](https://github.com/DIGITALLNature/DigitallAssemblyPower/commit/86797c02219cb3f8e43a4dffa0b029c7ca732bcf))
+* suppress false-positive NRE after non-null assertion in BeginScope test ([2bf5ba5](https://github.com/DIGITALLNature/DigitallAssemblyPower/commit/2bf5ba5d158222ee4e6647ae4c8f12a42dce9432))
+* TimeProvider package dependency ([c6a503c](https://github.com/DIGITALLNature/DigitallAssemblyPower/commit/c6a503c9306df37b9af32c12a9c0d91a9a741f7b))
+* use logger delegates ([9d07543](https://github.com/DIGITALLNature/DigitallAssemblyPower/commit/9d07543275e004ca2c9a2d8d38e7ff61c2b39dfc))
+
+
+### Features
+
+* add extension method for managed identity service ([58ad24e](https://github.com/DIGITALLNature/DigitallAssemblyPower/commit/58ad24e1b90c167957759641e0dde246d777ea54))
+* add extension methods for new bulk operations ([5422440](https://github.com/DIGITALLNature/DigitallAssemblyPower/commit/5422440fbff86c53af1f59cf8d21c8dcf57d1659))
+* add support for multiple log sinks ([23694bb](https://github.com/DIGITALLNature/DigitallAssemblyPower/commit/23694bb15f410b81b3f2b99b62bdcfa8d933ec25))
+
+
+### BREAKING CHANGES
+
+* Renames package, solution, project paths, and namespaces from Digitall.APower to Digitall.Plugins.
+
 # [1.1.0-beta.6](https://github.com/DIGITALLNature/DigitallAssemblyPower/compare/v1.1.0-beta.5...v1.1.0-beta.6) (2026-06-16)
 
 
