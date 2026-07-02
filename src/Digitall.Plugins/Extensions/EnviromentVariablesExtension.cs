@@ -16,6 +16,7 @@ public static class EnvironmentVariablesExtension
     /// <returns>The value of the configuration setting, or the default value if it is not found.</returns>
     public static string GetConfig(this Executor executor, string key, string defaultValue = null)
     {
+        if (executor == null) throw new ArgumentNullException(nameof(executor));
         // Call the GetConfig method on the ServiceProvider property of the executor instance
         return executor.ServiceProvider.GetConfig(key, defaultValue);
     }
@@ -30,6 +31,7 @@ public static class EnvironmentVariablesExtension
     /// <returns>The value of the configuration setting, or the default value if not found.</returns>
     public static string GetConfig(this IServiceProvider serviceProvider, string key, string defaultValue = null)
     {
+        if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
         // Initialize the config value to the default value, or null if not provided
         var configValue = defaultValue;
 

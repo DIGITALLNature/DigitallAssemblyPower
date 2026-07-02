@@ -216,17 +216,17 @@ public abstract class Executor : IPlugin
     /// <summary>
     ///     Get query from execution context.
     /// </summary>
-    public bool Query(out QueryExpression query, out ColumnSet columnSet) => Core.GetQuery(out query, out columnSet);
+    public bool Query(out QueryExpression queryExpression, out ColumnSet columnSet) => Core.GetQuery(out queryExpression, out columnSet);
 
     /// <summary>
     ///     Get query from execution context.
     /// </summary>
-    public bool Query(out QueryByAttribute query, out ColumnSet columnSet) => Core.GetQuery(out query, out columnSet);
+    public bool Query(out QueryByAttribute queryByAttribute, out ColumnSet columnSet) => Core.GetQuery(out queryByAttribute, out columnSet);
 
     /// <summary>
     ///     Get query from execution context.
     /// </summary>
-    public bool Query(out FetchExpression query, out ColumnSet columnSet) => Core.GetQuery(out query, out columnSet);
+    public bool Query(out FetchExpression fetchExpression, out ColumnSet columnSet) => Core.GetQuery(out fetchExpression, out columnSet);
 
 
     /// <summary>

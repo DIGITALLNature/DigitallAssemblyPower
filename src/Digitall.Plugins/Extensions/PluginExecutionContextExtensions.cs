@@ -9,6 +9,11 @@ namespace Digitall.Plugins.Extensions;
 
 public static class PluginExecutionContextExtensions
 {
+    private const int StagePreValidation = 10;
+    private const int StagePreOperation = 20;
+    private const int StageMainOperation = 30;
+    private const int StagePostOperation = 40;
+
     extension(IPluginExecutionContext context)
     {
         public bool GetInputParameter<T>(string name, out T value) => context.InputParameters.TryGetValue(name, out value);
@@ -42,7 +47,7 @@ public static class PluginExecutionContextExtensions
         {
             if (context.GetInputParameter("RelatedEntities", out EntityReferenceCollection collection)) return collection;
 
-            return null;
+            return [];
         }
 
         public ColumnSet GetColumnSet()
@@ -98,8 +103,12 @@ public static class PluginExecutionContextExtensions
             // ReSharper disable once InvertIf
             if (context.GetInputParameter("Query", out query))
             {
-                columnSet ??= new ColumnSet(XDocument.Load(XmlReader.Create(new StringReader(query.Query))).Descendants("attribute").Select(d => d.Attribute("name")).ToList()
-                    .Select(e => e.Value.ToString()).ToArray());
+                using var xmlReader = XmlReader.Create(new StringReader(query.Query));
+                columnSet ??= new ColumnSet(XDocument.Load(xmlReader)
+                    .Descendants("attribute")
+                    .Select(d => d.Attribute("name"))
+                    .Select(e => e.Value)
+                    .ToArray());
 
                 return true;
             }
@@ -124,10 +133,10 @@ public static class PluginExecutionContextExtensions
         public string GetFormattedExecutionStage() =>
             context.Stage switch
             {
-                10 => "PreValidation",
-                20 => "PreOperation",
-                30 => "MainOperation",
-                40 => "PostOperation",
+                StagePreValidation => "PreValidation",
+                StagePreOperation => "PreOperation",
+                StageMainOperation => "MainOperation",
+                StagePostOperation => "PostOperation",
                 _ => null
             };
 

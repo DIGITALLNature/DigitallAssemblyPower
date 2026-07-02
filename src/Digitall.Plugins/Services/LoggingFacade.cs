@@ -14,7 +14,10 @@ public class LoggingFacade(ITracingService tracingService, ILogger logger) : ILo
 
     public void Log(LogLevel logLevel, Exception exception, string message, params object[] args)
     {
-        tracingService.Trace($"{logLevel}: {message}{Environment.NewLine}{exception}{Environment.NewLine}{exception.StackTrace}", args);
+        var exceptionInfo = exception != null
+            ? $"{Environment.NewLine}{exception}{Environment.NewLine}{exception.StackTrace}"
+            : string.Empty;
+        tracingService.Trace($"{logLevel}: {message}{exceptionInfo}", args);
         logger.Log(logLevel, exception, message, args);
     }
 

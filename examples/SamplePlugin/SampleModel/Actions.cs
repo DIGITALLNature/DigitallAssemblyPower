@@ -1,8 +1,2 @@
-using System;
-using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Client;
-
 // ReSharper disable All
-namespace dgt.Model.Dataverse
-{
-}
+// Early-bound Dataverse action stubs - generated in a real project via pac modelbuilder

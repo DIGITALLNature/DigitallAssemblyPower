@@ -30,8 +30,6 @@ namespace SamplePlugin
             try
             {
                 // Invoke the custom implementation
-
-                return;
             }
             catch (FaultException<OrganizationServiceFault> orgServiceFault)
             {
