@@ -1,0 +1,221 @@
+# Agent Guidelines
+
+Instructions for all AI agents (GitHub Copilot, Claude, Cursor, etc.) working on this repository.
+
+---
+
+## Documentation Maintenance (MANDATORY)
+
+When making changes to this codebase, **you MUST keep the documentation up to date**. This is not optional.
+
+### Rules
+
+1. **README.md must reflect the current state of the project.** After any change that affects the public API, architecture, configuration, project structure, or usage patterns, update the corresponding section(s) in `README.md`.
+
+2. **What requires a README update:**
+   - Adding, removing, or renaming public classes, interfaces, or methods
+   - Adding or removing NuGet dependencies
+   - Adding new Organization Request fakes
+   - Changing configuration/environment variables
+   - Modifying the builder APIs or fluent extensions
+   - Adding new folders or restructuring the project
+   - Changing build/test commands or CI/CD workflows
+   - Adding new features or capabilities
+
+3. **What does NOT require a README update:**
+   - Internal refactoring that doesn't change the public API
+   - Bug fixes that don't change behavior or usage
+   - Test-only changes
+   - Code style / formatting changes
+
+4. **CHANGELOG.md is auto-generated** by semantic-release. Do NOT edit it manually.
+
+5. **Keep documentation in English.** All documentation in this repository is written in English.
+
+### Documentation Style
+
+- Use concise, technical language
+- Include code examples for new public APIs
+- Keep the table of contents in sync with the actual sections
+- Use tables for listing related items (request fakes, config vars, etc.)
+- Architecture diagrams use ASCII art (no external dependencies)
+
+---
+
+## Code Conventions
+
+- **Language:** C# with latest LangVersion, nullable enabled, implicit usings
+- **Target Framework:** net462
+- **Naming:** Follow standard .NET naming conventions (PascalCase for public members)
+- **Licensing header:** All source files start with `// Copyright (c) DIGITALL Nature. All rights reserved`
+- **Tests:** Use TUnit framework with TUnit and TUnit.Mocks
+
+---
+
+## Commit Messages
+
+This project uses [Conventional Commits](https://www.conventionalcommits.org/) enforced by commitlint + Husky.
+
+### Format
+
+```
+<type>(<scope>): <short description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+### Types
+
+| Type | When to use | Version bump |
+|------|-------------|--------------|
+| `feat` | New feature or capability | minor |
+| `fix` | Bug fix | patch |
+| `docs` | Documentation only | none |
+| `refactor` | Code change that neither fixes a bug nor adds a feature | none |
+| `perf` | Performance improvement | patch |
+| `test` | Adding or updating tests only | none |
+| `chore` | Tooling, CI, dependencies, config | none |
+| `style` | Formatting, white-space, etc. (no logic change) | none |
+
+### Rules
+
+- **Subject line:** imperative mood, lowercase, no period at end, max 100 chars
+- **Breaking changes:** Add `!` after type/scope (e.g. `feat!: remove deprecated API`) or add `BREAKING CHANGE:` footer
+- **Scope:** optional, use the affected component (e.g. `feat(query): add fiscal year grouping`)
+
+### Examples
+
+```
+feat: add BulkUpsert organization request fake
+fix(query): correct paging cookie generation for empty results
+docs: update README with relationship management section
+refactor: extract condition parsing into dedicated class
+test: add coverage for FetchXml aggregate queries
+chore: bump Microsoft.PowerPlatform.Dataverse.Client to 1.2.10
+feat!: remove deprecated ModelAssemblies property
+```
+
+---
+
+## Testing (MANDATORY)
+
+Every code change that modifies behavior **must** be accompanied by tests.
+
+### Rules
+
+1. **New features:** Write tests that cover the happy path and relevant edge cases.
+2. **Bug fixes:** Write a test that reproduces the bug before fixing it (test-first when feasible).
+3. **Refactoring:** Ensure existing tests still pass. Add tests if coverage gaps are discovered.
+4. **Deleted functionality:** Remove or update tests that cover the removed code.
+
+### Test Location
+
+- Tests live in `tests/Digitall.Plugins.Tests/`
+- Mirror the source folder structure (e.g. `Logic/` tests go in `tests/.../Logic/`)
+- Test class naming: `<ClassUnderTest>Tests.cs`
+
+### Test Style
+
+```csharp
+[Test]
+public async Task MethodName_Scenario_ExpectedResult()
+{
+    // Arrange
+    // Act
+    // Assert
+}
+```
+
+---
+
+## Build & Test Commands
+
+```bash
+dotnet restore              # Restore dependencies (uses lock files)
+dotnet build                # Build the solution
+dotnet run --project tests/Digitall.Plugins.Tests/Digitall.Plugins.Tests.csproj -f net10.0  # Run tests via TUnit host
+dotnet test                 # Run all tests
+```
+
+### Filtering Tests (TUnit)
+
+This project uses **TUnit**, which does **not** support the standard MSTest/xUnit `--filter` flag. Use `--treenode-filter` instead.
+
+> ⚠️ `dotnet test --filter "Name~Foo"` will silently run **zero tests** with TUnit — do not use it.
+
+TUnit's `--treenode-filter` matches against the tree path `/<Assembly>/<Namespace>/<Class>/<Test>`:
+
+```bash
+# Run a single test by exact name
+dotnet test --treenode-filter "/*/*/*/MethodName_Scenario_ExpectedResult"
+
+# Run all tests in a class
+dotnet test --treenode-filter "/*/*/SomeClassTests/*"
+
+# Run all tests in a namespace
+dotnet test --treenode-filter "/*/Digitall.Plugins.Tests/*/*"
+
+# Match-all shorthand (all tests in assembly)
+dotnet test --treenode-filter "/**"
+```
+
+The filter uses glob patterns (`*` matches anything within one segment, `**` matches any depth but must appear at the end).
+If a filter matches nothing, the exit code is **8** (not a test failure) — double-check the namespace/class/method name.
+
+---
+
+## Fixing Qodana / Static Analysis Issues
+
+When asked to fix issues from a Qodana SARIF report, follow these rules strictly.
+
+### Rules
+
+1. **Always load the baseline first.** The repository contains `baseline.sarif.json` at the root. Any issue that appears in that file is already accepted and **must not be fixed**. Compare the incoming SARIF against the baseline by `ruleId` + file path + line number before touching any code.
+
+2. **Never touch generated code.** Files that carry any of the following markers are off-limits regardless of what the SARIF reports:
+   - `[GeneratedCode(...)]` attribute on the class
+   - `// <auto-generated>` header comment
+   - `// ReSharper disable All` at the top (used in this repo for early-bound entity fixtures)
+   - Located under `Fixtures/Model/DotNet/` in the test project
+
+3. **Scope of fixes — only act on issues that are:**
+   - Present in the incoming SARIF **and**
+   - Absent from `baseline.sarif.json` **and**
+   - Not in generated / off-limits files
+
+4. **Common issue types and how to fix them:**
+
+   | Rule | Fix |
+   |------|-----|
+   | `InconsistentNaming` (`static_fields_should_have_prefix`) | Rename `static readonly` fields to use the `s_` prefix; update all usages in the same file. |
+   | `RedundantSuppressNullableWarningExpression` | Remove the redundant `!` null-forgiving operator. |
+   | `ConvertToLocalFunction` | Replace `var name = () => …` lambda assignments with `void name() => …` local function declarations. |
+   | `UseCollectionExpression` | Replace `new SomeCollection { item1, item2 }` initializers with C# 12 collection expressions `[item1, item2]`. |
+   | `UseObjectOrCollectionInitializer` | Merge subsequent property assignments (e.g. `obj.Prop = val;`) into the object's initializer block. |
+   | `CS8631` (nullable type argument mismatch) | Add `!` null-forgiving to the expression that produces the `T?` value so the inferred type becomes `T`. |
+
+5. **Build and test after every batch of fixes.** Use `rtk dotnet build` and `rtk dotnet test` to verify no regressions before committing.
+
+6. **Do not update `baseline.sarif.json` manually.** It is managed by the Qodana CI pipeline.
+
+---
+
+## RTK — Token-Optimized CLI
+
+**rtk** is a CLI proxy that filters and compresses command outputs, saving 60-90% tokens.
+
+**Always prefix shell commands with `rtk`** when available. It passes through unchanged if no filter exists — always safe to use.
+
+```bash
+rtk git status              # Compact status
+rtk git diff                # Compact diff
+rtk dotnet build            # Filtered build output
+rtk dotnet test             # Failures only
+```
+
+Even in command chains:
+```bash
+rtk git add . && rtk git commit -m "msg" && rtk git push
+```

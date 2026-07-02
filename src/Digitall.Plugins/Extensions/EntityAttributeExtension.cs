@@ -5,65 +5,67 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Microsoft.Xrm.Sdk;
+// ReSharper disable UnusedMember.Global
+// ReSharper disable MemberCanBePrivate.Global
 
-namespace Digitall.APower
+namespace Digitall.Plugins.Extensions;
+
+/// <summary>
+///     EntityAttribute extensions
+/// </summary>
+public static class EntityAttributeExtension
 {
-    /// <summary>
-    ///     EntityAttribute extensions
-    /// </summary>
-    public static class EntityAttributeExtension
+    /// <param name="executor">self</param>
+    extension(Executor executor)
     {
         /// <summary>
         ///     Get value T from entity. Lookup order 1st Entity, 2nd PreEntityImage, 3rd default!
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="executor">self</param>
         /// <param name="attribute">lookup attribute</param>
         /// <returns></returns>
-        public static T GetEntityAttributeValue<T>(this Executor executor, string attribute) => executor.Core.GetEntityAttributeValue<T>(attribute);
-
+        public T GetEntityAttributeValue<T>(string attribute) => executor.Core.GetEntityAttributeValue<T>(attribute);
 
         /// <summary>
         ///     Evaluates if Entity contains attribute and PreEntityImage does not
         /// </summary>
-        /// <param name="executor">self</param>
         /// <param name="attribute">lookup attribute</param>
         /// <returns></returns>
-        public static bool IsEntityAttributeValueNew(this Executor executor, string attribute) => executor.Core.IsEntityAttributeValueNew(attribute);
+        public bool IsEntityAttributeValueNew(string attribute) => executor.Core.IsEntityAttributeValueNew(attribute);
 
         /// <summary>
         ///     Evaluates if attribute in Entity is set and is different from PreEntityImage
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="executor">self</param>
         /// <param name="attribute">lookup attribute</param>
         /// <returns></returns>
-        public static bool IsEntityAttributeValueChanged<T>(this Executor executor, string attribute) => executor.Core.IsEntityAttributeValueChanged<T>(attribute);
+        public bool IsEntityAttributeValueChanged<T>(string attribute) => executor.Core.IsEntityAttributeValueChanged<T>(attribute);
 
         /// <summary>
         ///     Evaluates if attribute contained in Entity or PreEntityImage and not null.
         /// </summary>
-        /// <param name="executor">self</param>
         /// <param name="attribute">lookup attribute</param>
         /// <returns></returns>
-        public static bool IsEntityAttributeValueNullOrEmpty(this Executor executor, string attribute) => executor.Core.IsEntityAttributeValueNullOrEmpty(attribute);
+        public bool IsEntityAttributeValueNullOrEmpty(string attribute) => executor.Core.IsEntityAttributeValueNullOrEmpty(attribute);
 
         /// <summary>
         ///     Merge Entity and PreEntityImage
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="executor">self</param>
         /// <returns></returns>
-        public static T MergeEntity<T>(this Executor executor) where T : Entity => executor.Core.MergeEntity<T>();
+        public T MergeEntity<T>() where T : Entity => executor.Core.MergeEntity<T>();
+    }
 
+    /// <param name="pluginExecutionContext">self</param>
+    extension(IPluginExecutionContext pluginExecutionContext)
+    {
         /// <summary>
         ///     Get value T from entity. Lookup order 1st Entity, 2nd PreEntityImage, 3rd default!
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="pluginExecutionContext">self</param>
         /// <param name="attribute">lookup attribute</param>
         /// <returns></returns>
-        public static T GetEntityAttributeValue<T>(this IPluginExecutionContext pluginExecutionContext, string attribute)
+        public T GetEntityAttributeValue<T>(string attribute)
         {
             Debug.Assert(pluginExecutionContext != null, nameof(pluginExecutionContext) + " != null");
             var entity = pluginExecutionContext.GetTarget<Entity>();
@@ -84,10 +86,9 @@ namespace Digitall.APower
         /// <summary>
         ///     Evaluates if Entity contains attribute and PreEntityImage does not
         /// </summary>
-        /// <param name="pluginExecutionContext">self</param>
         /// <param name="attribute">lookup attribute</param>
         /// <returns></returns>
-        public static bool IsEntityAttributeValueNew(this IPluginExecutionContext pluginExecutionContext, string attribute)
+        public bool IsEntityAttributeValueNew(string attribute)
         {
             Debug.Assert(pluginExecutionContext != null, nameof(pluginExecutionContext) + " != null");
             var entity = pluginExecutionContext.GetTarget<Entity>();
@@ -101,10 +102,9 @@ namespace Digitall.APower
         ///     Evaluates if attribute in Entity is set and is different from PreEntityImage
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="pluginExecutionContext">self</param>
         /// <param name="attribute">lookup attribute</param>
         /// <returns></returns>
-        public static bool IsEntityAttributeValueChanged<T>(this IPluginExecutionContext pluginExecutionContext, string attribute)
+        public bool IsEntityAttributeValueChanged<T>(string attribute)
         {
             Debug.Assert(pluginExecutionContext != null, nameof(pluginExecutionContext) + " != null");
             var entity = pluginExecutionContext.GetTarget<Entity>();
@@ -153,26 +153,26 @@ namespace Digitall.APower
         /// <summary>
         ///     Evaluates if attribute contained in Entity or PreEntityImage and not null.
         /// </summary>
-        /// <param name="pluginExecutionContext">self</param>
         /// <param name="attribute">lookup attribute</param>
         /// <returns></returns>
-        public static bool IsEntityAttributeValueNullOrEmpty(this IPluginExecutionContext pluginExecutionContext, string attribute)
+        public bool IsEntityAttributeValueNullOrEmpty(string attribute)
         {
             Debug.Assert(pluginExecutionContext != null, nameof(pluginExecutionContext) + " != null");
             var entity = pluginExecutionContext.GetTarget<Entity>();
             var preImage = pluginExecutionContext.GetPreImage<Entity>();
 
-            return entity != null && (!entity.Contains(attribute) || entity[attribute] == null) &&
-                   (preImage == null || !preImage.Contains(attribute) || preImage[attribute] == null);
+            if (entity == null) return false;
+            var entityAttributeNullOrMissing = !entity.Contains(attribute) || entity[attribute] == null;
+            var preImageAttributeNullOrMissing = preImage == null || !preImage.Contains(attribute) || preImage[attribute] == null;
+            return entityAttributeNullOrMissing && preImageAttributeNullOrMissing;
         }
 
         /// <summary>
         ///     Merge Entity and PreEntityImage
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="pluginExecutionContext">self</param>
         /// <returns></returns>
-        public static T MergeEntity<T>(this IPluginExecutionContext pluginExecutionContext) where T : Entity
+        public T MergeEntity<T>() where T : Entity
         {
             Debug.Assert(pluginExecutionContext != null, nameof(pluginExecutionContext) + " != null");
             var entity = pluginExecutionContext.GetTarget<Entity>();

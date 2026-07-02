@@ -3,8 +3,9 @@
 
 using System;
 using System.ServiceModel;
-using Digitall.APower;
+using Digitall.Plugins.Extensions;
 using Microsoft.Xrm.Sdk;
+// ReSharper disable UnusedType.Global
 
 namespace SamplePlugin
 {
@@ -30,12 +31,10 @@ namespace SamplePlugin
             try
             {
                 // Invoke the custom implementation
-
-                return;
             }
             catch (FaultException<OrganizationServiceFault> orgServiceFault)
             {
-                tracing.Trace($"Exception: {orgServiceFault.ToString()}");
+                tracing.Trace($"Exception: {orgServiceFault}");
 
                 throw new InvalidPluginExecutionException($"OrganizationServiceFault: {orgServiceFault.Message}", orgServiceFault);
             }
