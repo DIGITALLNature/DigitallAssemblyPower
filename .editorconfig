@@ -158,6 +158,21 @@ csharp_space_between_square_brackets = false
 # License header
 file_header_template = Copyright (c) DIGITALL Nature.All rights reserved\nDIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+# Suppress false positives from C# 14 extension(T) block syntax (analyzer sees nested types)
+dotnet_diagnostic.CA1034.severity = none
+# Extension factory methods (GetLogger, GetFormattedExecutionStage, etc.) are intentionally methods, not properties
+dotnet_diagnostic.CA1024.severity = none
+# C# 14 extension blocks for different receiver types appear to differ only by case to the analyzer
+dotnet_diagnostic.CA1708.severity = none
+
+# SampleModel contains early-bound entity stubs that would normally be generated code
+[examples/SamplePlugin/SampleModel/*.cs]
+generated_code = true
+
+# Test code: magic numbers in [Arguments] attributes are intentional and self-documenting
+[tests/**/*.cs]
+dotnet_diagnostic.S109.severity = none
+
 # C++ Files
 [*.{cpp,h,in}]
 curly_bracket_next_line = true

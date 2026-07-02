@@ -1,0 +1,11 @@
+﻿<Solution>
+  <Folder Name="/samples/">
+    <Project Path="examples\SamplePlugin\SamplePlugin.csproj" Type="C#" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Digitall.Plugins/Digitall.Plugins.csproj" Type="C#" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Digitall.Plugins.Tests/Digitall.Plugins.Tests.csproj" Type="C#" />
+  </Folder>
+</Solution>

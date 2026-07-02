@@ -3,14 +3,14 @@
 
 using System;
 using System.ServiceModel;
-using Digitall.APower;
+using Digitall.Plugins.Extensions;
 using Microsoft.Xrm.Sdk;
+// ReSharper disable UnusedType.Global
 
 namespace SamplePlugin
 {
     public class VanillaSample : IPlugin
     {
-
 
         public void Execute(IServiceProvider serviceProvider)
         {
@@ -19,28 +19,28 @@ namespace SamplePlugin
                 throw new InvalidPluginExecutionException(nameof(serviceProvider));
             }
 
-            // Construct the local plug-in context.
-            var pluginCore = new PluginCore(serviceProvider);
+            var executionContext = serviceProvider.GetExecutionContext();
+            var tracing = serviceProvider.GetTracingService();
 
-            pluginCore.TracingService.Trace($"Entered {nameof(VanillaSample)}.Execute() " +
-                                     $"Correlation Id: {pluginCore.PluginExecutionContext.CorrelationId}, " +
-                                     $"Initiating User: {pluginCore.PluginExecutionContext.InitiatingUserId}");
+            tracing.Trace($"Entered {nameof(VanillaSample)}.Execute() " +
+                          $"Correlation Id: {executionContext.CorrelationId}, " +
+                          $"Initiating User: {executionContext.InitiatingUserId}");
 
+
+            // Add your custom implementation of the plug-in.
             try
             {
                 // Invoke the custom implementation
-
-                return;
             }
             catch (FaultException<OrganizationServiceFault> orgServiceFault)
             {
-                pluginCore.Trace($"Exception: {orgServiceFault.ToString()}");
+                tracing.Trace($"Exception: {orgServiceFault}");
 
                 throw new InvalidPluginExecutionException($"OrganizationServiceFault: {orgServiceFault.Message}", orgServiceFault);
             }
             finally
             {
-                pluginCore.Trace($"Exiting {nameof(VanillaSample)}.Execute()");
+                tracing.Trace($"Exiting {nameof(VanillaSample)}.Execute()");
             }
         }
     }

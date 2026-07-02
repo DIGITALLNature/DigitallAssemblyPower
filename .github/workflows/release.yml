@@ -1,32 +1,41 @@
-name: Release DGTA
+name: Release Digitall.Plugins
 
 on:
   push:
     branches: [ "main", "beta" ]
+  workflow_dispatch:
 
 jobs:
   release:
     name: Semantic Release
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/beta')
-    runs-on: ubuntu-latest
+    if: |
+      (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/beta')) ||
+      github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.CI_GITHUB_TOKEN }}
+          fetch-depth: 0
+          fetch-tags: true
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
       - name: Use Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
-      - name: Cache Packages
-        uses: actions/cache@v3
+          node-version: 24
+          cache: 'pnpm'
+      - name: Restore DotNet
+        uses: actions/setup-dotnet@v4
         with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
+          dotnet-version: 10.x
+          cache: true
+          cache-dependency-path: '**/packages.lock.json'
       - name: Install packages
-        run: npm ci --no-fund --ignore-scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
+      - name: Dotnet Restore
+        run: dotnet restore
       - name: Materialize Signing Key
         id: write_sign_key_file
         uses: timheuer/base64-to-file@v1

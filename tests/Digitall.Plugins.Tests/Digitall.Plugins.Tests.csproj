@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+      <TargetFramework>net10.0</TargetFramework>
+      <IsPackable>false</IsPackable>
+      <IsTestProject>true</IsTestProject>
+      <OutputType>Exe</OutputType>
+      <ImplicitUsings>disable</ImplicitUsings>
+      <StaticAnalysisCodeType>Test</StaticAnalysisCodeType>
+      <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+      <!-- net10.0 test project referencing net462 libs: lock file validation
+           breaks in locked mode because NuGet cannot represent cross-TFM
+           project references in a lock file. Disabling the lock file for this
+           project is the standard workaround; all other projects still enforce
+           locked mode. -->
+      <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+      <NoWarn>$(NoWarn);NU1701;NU1702;CS1705</NoWarn>
+      <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);MSB3277</MSBuildWarningsAsMessages>
+    </PropertyGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="10.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="TUnit" Version="1.58.0" />
+    <PackageReference Include="TUnit.Mocks" Version="1.58.0" />
+    <PackageReference Include="Digitall.Dataverse.Testing" Version="1.1.0" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.9" />
+    <PackageReference Include="Microsoft.Extensions.StaticAnalysis" Version="10.7.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.300">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Digitall.Plugins\Digitall.Plugins.csproj" />
+  </ItemGroup>
+</Project>

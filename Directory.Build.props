@@ -2,25 +2,30 @@
 
   <PropertyGroup>
     <Company>DIGITALL Nature GmbH</Company>
-    <Copyright>Copyright (c) DIGITALL Nature GmbH 2023</Copyright>
+    <Copyright>Copyright (c) DIGITALL Nature GmbH 2024</Copyright>
     <Authors>Marcel Kummerow</Authors>
-    <Product>Digitall Assembly Power</Product>
-    <PackageLicenseExpression>MS-RL</PackageLicenseExpression>
+    <Product>Digitall.Plugins</Product>
+    <PackageLicenseExpression>MS-PL</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/DIGITALLNature/DigitallAssemblyPower</PackageProjectUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>https://github.com/DIGITALLNature/DigitallAssemblyPower/blob/main/CHANGELOG.md</PackageReleaseNotes>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile Condition="'$(AssemblyOriginatorKeyFile)' == ''">$(MSBuildThisFileDirectory)tests/dgt.tests.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <PropertyGroup>
     <TargetFramework>net462</TargetFramework>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <LangVersion>latest</LangVersion>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>1.0.0</Version>
-    <InformationalVersion>1.0.0</InformationalVersion>
-    <RepositoryCommit>e6f94eabca4259e7e3da778aa2ff56b622c0f716</RepositoryCommit>
+    <Version>2.0.0-beta.1</Version>
+    <InformationalVersion>2.0.0-beta.1</InformationalVersion>
+    <RepositoryCommit>e27a02cf9ae7beb51a4e673c47ffa2f3e163339f</RepositoryCommit>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
@@ -28,7 +33,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)Licence.md" Pack="true" PackagePath="/"/>
+    <None Include="$(MSBuildThisFileDirectory)LICENSE" Pack="true" PackagePath="/"/>
     <None Include="README.md" Pack="true" PackagePath="/"/>
   </ItemGroup>
 

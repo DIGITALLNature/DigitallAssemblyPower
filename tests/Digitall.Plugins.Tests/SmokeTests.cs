@@ -1,0 +1,16 @@
+// Copyright (c) DIGITALL Nature.All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using System.Threading.Tasks;
+
+namespace Digitall.Plugins.Tests;
+
+public class SmokeTests
+{
+    [Test]
+    public async Task TUnit_Is_Configured()
+    {
+        var configured = System.DateTime.UtcNow.Year >= 2000;
+        await Assert.That(configured).IsTrue();
+    }
+}
