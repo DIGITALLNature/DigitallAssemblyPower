@@ -41,7 +41,7 @@ public static class PluginExecutionContextExtensions
         /// Retrieves a list of target entities from the plugin execution context.
         /// </summary>
         /// <remarks>Only available when registering the plugin on CreateMultiple or UpdateMultiple.</remarks>
-        public List<TEntity> GetTargets<TEntity>() where TEntity : Entity
+        public IReadOnlyList<TEntity> GetTargets<TEntity>() where TEntity : Entity
         {
             if (context.GetInputParameter("Targets", out EntityCollection targets))
                 return targets.Entities.Select(e => e.ToEntity<TEntity>()).ToList();
@@ -140,7 +140,7 @@ public static class PluginExecutionContextExtensions
         /// Retrieves a list of pre-images from the plugin execution context for the specified image name.
         /// </summary>
         /// <remarks>Only available when registering the plugin on CreateMultiple or UpdateMultiple.</remarks>
-        public List<TEntity> GetPreImages<TEntity>(string name = "PreImage") where TEntity : Entity
+        public IReadOnlyList<TEntity> GetPreImages<TEntity>(string name = "PreImage") where TEntity : Entity
         {
             if (context is not IPluginExecutionContext4 context4) return [];
             return context4.PreEntityImagesCollection.Where(x => x.ContainsKey(name)).Select(x => x[name].ToEntity<TEntity>()).ToList();
@@ -157,7 +157,7 @@ public static class PluginExecutionContextExtensions
         /// Retrieves a collection of post-images from the plugin execution context.
         /// </summary>
         /// <remarks>Only available when registering the plugin on CreateMultiple or UpdateMultiple.</remarks>
-        public List<TEntity> GetPostImages<TEntity>(string name = "PostImage") where TEntity : Entity
+        public IReadOnlyList<TEntity> GetPostImages<TEntity>(string name = "PostImage") where TEntity : Entity
         {
             if (context is not IPluginExecutionContext4 context4) return [];
             return context4.PostEntityImagesCollection.Where(x => x.ContainsKey(name)).Select(x => x[name].ToEntity<TEntity>()).ToList();

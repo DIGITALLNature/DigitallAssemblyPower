@@ -23,10 +23,6 @@ public abstract partial class PluginSkeleton : IPlugin
     public void Execute(IServiceProvider serviceProvider)
     {
         if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
-<<<<<<< HEAD
-
-=======
->>>>>>> 86797c0 (fix: resolve all static analyzer errors and suppress C# 14 extension false positives)
         // Get the logger from the service provider
         var logger = serviceProvider.GetLogger(ServiceProviderExtensions.LogSink.PluginTelemetry, ServiceProviderExtensions.LogSink.TracingService);
 
