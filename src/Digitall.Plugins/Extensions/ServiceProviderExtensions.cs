@@ -132,7 +132,7 @@ public static class ServiceProviderExtensions
         /// This is a workaround for a known issue in Dynamics 365 where the <see cref="IOrganizationServiceFactory"/> doesn't
         /// automatically load the proxy types assembly when the service provider is created.
         ///
-        /// The Behavior is undocumented and usage is without any warrenty!
+        /// The Behavior is undocumented and usage is without any warranty!
         /// </remarks>
         /// <param name="assembly">The assembly containing the proxy types.</param>
         /// <returns>The service provider.</returns>
