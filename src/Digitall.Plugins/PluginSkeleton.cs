@@ -12,11 +12,6 @@ namespace Digitall.Plugins;
 public abstract partial class PluginSkeleton : IPlugin
 {
     /// <summary>
-    /// Encapsulates access to DateTime to facilitate testing of date-dependent code
-    /// </summary>
-    public TimeProvider TimeProvider { get; protected set; } = TimeProvider.System;
-
-    /// <summary>
     /// Executes the plugin using the provided service provider.
     /// </summary>
     /// <param name="serviceProvider">The service provider.</param>

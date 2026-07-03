@@ -5,7 +5,6 @@ using System;
 using System.Threading.Tasks;
 using Digitall.Dataverse.Testing;
 using Digitall.Dataverse.Testing.Extensions;
-using Microsoft.Extensions.Time.Testing;
 using Microsoft.Xrm.Sdk;
 
 namespace Digitall.Plugins.Tests;
@@ -18,8 +17,6 @@ public class PluginSkeletonTests
         public bool ExecuteInternalCalled { get; private set; }
         public IServiceProvider LastServiceProvider { get; private set; }
         public bool ShouldThrow { get; init; }
-
-        public void SetTimeProvider(TimeProvider tp) => TimeProvider = tp;
 
         protected override void ExecuteInternal(IServiceProvider serviceProvider)
         {
@@ -73,24 +70,4 @@ public class PluginSkeletonTests
         await Assert.That(ex).IsTypeOf<InvalidOperationException>();
     }
 
-    // ── TimeProvider override ─────────────────────────────────────────────────
-
-    [Test]
-    public async Task TimeProvider_CanBeOverridden_ReturnsInjectedTime()
-    {
-        var fixedTime = new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero);
-        var fakeTime = new FakeTimeProvider(fixedTime);
-        var plugin = new TrackingPlugin();
-        plugin.SetTimeProvider(fakeTime);
-
-        await Assert.That(plugin.TimeProvider.GetUtcNow()).IsEqualTo(fixedTime);
-    }
-
-    [Test]
-    public async Task TimeProvider_Default_IsSystemTimeProvider()
-    {
-        var plugin = new TrackingPlugin();
-
-        await Assert.That(plugin.TimeProvider).IsEqualTo(TimeProvider.System);
-    }
 }
