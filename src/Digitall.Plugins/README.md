@@ -222,6 +222,22 @@ var miService = serviceProvider.GetManagedIdentityService();
 | `GetLogger(params LogSink[] sinks)` | `ILogger` | Logger targeting specific sinks |
 | `GetTimeProvider()` | `TimeProvider` | Current time provider (testable) |
 | `GetManagedIdentityService()` | `IManagedIdentityService` | Managed identity service for token acquisition |
+| `RegisterProxyTypesAssembly(Assembly assembly)` | `IServiceProvider` | Points the `IOrganizationServiceFactory` at a specific early-bound (proxy types) assembly. Returns the service provider for chaining. |
+
+**Registering a Proxy Types Assembly:**
+
+By default the `IOrganizationServiceFactory` resolves early-bound proxy types from the plugin assembly. When your early-bound model lives in a *different* assembly, call `RegisterProxyTypesAssembly` to point the factory at it before creating an `IOrganizationService`:
+
+```csharp
+using Digitall.Plugins.Extensions;
+
+serviceProvider
+    .RegisterProxyTypesAssembly(typeof(Account).Assembly);
+
+var service = serviceProvider.GetOrganizationService();
+```
+
+> ⚠️ **Use at your own risk.** This sets the internal `ProxyTypesAssembly` property via reflection. The behavior is undocumented by Microsoft and is provided without any warranty — a future SDK change could break it. Only use it when your early-bound types are not discovered automatically.
 
 ---
 
@@ -342,6 +358,7 @@ GetLogger()                                                   // ILogger (defaul
 GetLogger(params LogSink[] sinks)                             // ILogger (specific sinks)
 GetTimeProvider()                                             // TimeProvider
 GetManagedIdentityService()                                   // IManagedIdentityService
+RegisterProxyTypesAssembly(Assembly assembly)                 // IServiceProvider (points factory at a model assembly)
 ```
 
 #### PluginExecutionContextExtensions
