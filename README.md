@@ -1,6 +1,6 @@
 # Digitall.Plugins
 
-NuGet package providing base classes and extensions to simplify Microsoft Dataverse plugin development with improved logging and error handling.
+NuGet package for Microsoft Dataverse plugin development that stays close to the standard `IPlugin` model while adding focused convenience features (extensions, logging adapters, and optional base classes).
 
 <p align="center">
     <a href="LICENSE" target="_blank">
@@ -22,11 +22,14 @@ NuGet package providing base classes and extensions to simplify Microsoft Datave
 ## Table of Contents
 
 - [Installation](#installation)
+- [Ecosystem Synergy](#ecosystem-synergy)
+- [Design Goals](#design-goals)
 - [Quick Start](#quick-start)
 - [Usage](#usage)
   - [PluginSkeleton](#pluginskeleton)
   - [Executor](#executor)
   - [Service Provider Extensions](#service-provider-extensions)
+  - [Time Provider (Testability)](#time-provider-testability)
   - [Logging](#logging)
 - [API Reference](#api-reference)
   - [Base Classes](#base-classes)
@@ -52,9 +55,36 @@ dotnet add src/MyProject package Digitall.Plugins
 
 ---
 
+## Ecosystem Synergy
+
+`Digitall.Plugins` is designed to work well on its own, but the best end-to-end developer experience comes from combining it with the related DIGITALL packages/tools:
+
+| Purpose | Package / Tool | Link |
+|---|---|---|
+| Plugin implementation helpers (base classes + extensions) | `Digitall.Plugins` | https://www.nuget.org/packages/Digitall.Plugins |
+| Fast, in-memory Dataverse testing | `Digitall.Dataverse.Testing` | https://www.nuget.org/packages/Digitall.Dataverse.Testing |
+| Attribute-based plugin/workflow registration metadata | `Digitall.Plugins.Registration` | https://www.nuget.org/packages/Digitall.Plugins.Registration |
+| ALM automation, registration and model generation workflows | `dgt.power` (`dgtp`) | https://www.nuget.org/packages/dgt.power |
+
+Typical flow:
+1. Implement plugin logic with `PluginSkeleton` (or plain `IPlugin`) plus extension methods from this package.
+2. Add registration attributes via `Digitall.Plugins.Registration`.
+3. Use `dgt.power` (`dgtp`) to handle registration and early-bound model generation workflows.
+4. Test plugin behavior quickly with `Digitall.Dataverse.Testing`, including deterministic time-based tests via `TimeProvider`.
+
+---
+
+## Design Goals
+
+- Stay close to Microsoft's standard Dataverse plugin model (`IPlugin` + `IServiceProvider`) to keep behavior predictable.
+- Keep framework logic transparent: extension methods provide convenience without adding hidden pipeline behavior.
+- Let teams adopt incrementally: use pure `IPlugin`, `PluginSkeleton`, or `Executor` depending on project needs.
+
+---
+
 ## Quick Start
 
-Choose the base class that best fits your plugin design:
+Choose the base class that best fits your plugin design. For new plugins, start with **PluginSkeleton**. If you prefer plain `IPlugin`, the extension methods work there as well.
 
 ### Using PluginSkeleton (Recommended)
 
@@ -97,14 +127,17 @@ public class MyExecutor : Executor
 
 ### PluginSkeleton
 
-`PluginSkeleton` is a modern, structured base class with built-in logging and exception handling. It automatically logs execution start/end times, parameters, and errors.
+`PluginSkeleton` is the recommended base class for new plugins. It follows Microsoft's stateless plugin guidance while keeping the standard `IServiceProvider` programming model you already know from raw `IPlugin`.
 
 **Benefits:**
-- Automatic performance logging (elapsed milliseconds)
-- Structured error logging with full context
-- Support for Microsoft.Extensions.Logging.ILogger
-- Support for Dataverse PluginTelemetry logging
-- Automatic exception propagation with logging
+- Same `IServiceProvider` flow as regular `IPlugin`, so existing code patterns are easy to migrate.
+- Designed for stateless execution (important because Dataverse may reuse plugin instances across invocations).
+- Automatic execution start/end logging with elapsed time.
+- Structured exception logging and rethrow behavior.
+- Access to `Microsoft.Extensions.Logging.ILogger`-compatible logging via selectable sinks.
+
+> [!IMPORTANT]
+> Keep plugin implementations stateless. Avoid mutable instance properties for request-specific data because the Dataverse runtime may reuse plugin instances across executions.
 
 **Override abstract method:**
 
@@ -127,7 +160,10 @@ public class AccountPlugin : PluginSkeleton
         var account = context.GetTarget<Entity>();
         
         // Access services via extensions
-        var logger = serviceProvider.GetLogger();
+        var logger = serviceProvider.GetLogger(
+            ServiceProviderExtensions.LogSink.PluginTelemetry,
+            ServiceProviderExtensions.LogSink.TracingService
+        );
         var service = serviceProvider.GetOrganizationService();
         
         logger.LogInformation("Processing account: {0}", account.Id);
@@ -139,7 +175,7 @@ public class AccountPlugin : PluginSkeleton
 
 ### Executor
 
-`Executor` is a legacy-compatible base class that provides convenient property accessors for common plugin execution patterns. It implements the "stateless" Microsoft recommendation by cloning itself on each invocation.
+`Executor` is a legacy-compatible base class kept for backward compatibility. It is **not deprecated**, but new plugins should generally start with `PluginSkeleton` (or plain `IPlugin` if preferred).
 
 **Benefits:**
 - Simplified property access (Entity, EntityReference, PreEntityImage, etc.)
@@ -194,7 +230,7 @@ public class AccountExecutor : Executor
 
 ### Service Provider Extensions
 
-Access Dataverse services and utilities through extension methods on `IServiceProvider`.
+Extension methods are the core value of this library. They work with any plugin style (`IPlugin`, `PluginSkeleton`, `Executor`, or custom base classes) and add convenience APIs without introducing black-box framework behavior.
 
 ```csharp
 using Digitall.Plugins.Extensions;
@@ -218,19 +254,41 @@ var miService = serviceProvider.GetManagedIdentityService();
 | `GetOrganizationService(Guid userId)` | `IOrganizationService` | Service for specified user |
 | `GetElevatedOrganizationService()` | `IOrganizationService` | Service with system (elevated) privileges |
 | `GetTracingService()` | `ITracingService` | Tracing service for legacy logging |
-| `GetLogger()` | `ILogger` | Default Dataverse logger (combined Telemetry + Tracing) |
-| `GetLogger(params LogSink[] sinks)` | `ILogger` | Logger targeting specific sinks |
+| `GetLogger()` | `Microsoft.Xrm.Sdk.PluginTelemetry.ILogger` | Native Dataverse Plugin Telemetry logger |
+| `GetLogger(params LogSink[] sinks)` | `Microsoft.Extensions.Logging.ILogger` | Standard .NET logger abstraction with selectable sinks |
 | `GetTimeProvider()` | `TimeProvider` | Current time provider (testable) |
 | `GetManagedIdentityService()` | `IManagedIdentityService` | Managed identity service for token acquisition |
 
 ---
 
-### Logging
+### Time Provider (Testability)
 
-The library provides integrated logging through `ILogger` (Microsoft.Extensions.Logging compatible):
+Use `TimeProvider` for date/time-dependent plugin logic instead of directly calling `DateTime.UtcNow`.
+
+At runtime, `GetTimeProvider()` falls back to `TimeProvider.System` when no custom provider is registered by the host. In tests, inject a fake provider (for example `FakeTimeProvider` from [`Microsoft.Extensions.TimeProvider.Testing`](https://www.nuget.org/packages/Microsoft.Extensions.TimeProvider.Testing)), optionally together with [`Digitall.Dataverse.Testing`](https://www.nuget.org/packages/Digitall.Dataverse.Testing) for full in-memory Dataverse test scenarios.
 
 ```csharp
-var logger = serviceProvider.GetLogger();
+var timeProvider = serviceProvider.GetTimeProvider();
+var utcNow = timeProvider.GetUtcNow();
+```
+
+---
+
+### Logging
+
+The library supports two logger interfaces and keeps the naming explicit:
+
+- `GetLogger()` returns `Microsoft.Xrm.Sdk.PluginTelemetry.ILogger` (Dataverse plugin telemetry logger).
+- `GetLogger(params LogSink[] sinks)` returns `Microsoft.Extensions.Logging.ILogger` (standard .NET logging abstraction).
+- Older versions exposed `LoggingFacade`; current guidance is to use the standard .NET `ILogger` abstraction from `GetLogger(params LogSink[] sinks)`.
+
+This lets you code against the standard .NET abstraction and change log sinks without rewriting logging calls (for example from `TracingService` only to `TracingService + PluginTelemetry`).
+
+```csharp
+var logger = serviceProvider.GetLogger(
+    ServiceProviderExtensions.LogSink.PluginTelemetry,
+    ServiceProviderExtensions.LogSink.TracingService
+);
 
 logger.LogInformation("Processing entity {0}", entityId);
 logger.LogWarning("Warning: {0}", message);
@@ -239,7 +297,14 @@ logger.LogError("Error occurred: {0}", exception);
 
 **Log Sinks:**
 
-By default, logs go to both PluginTelemetry and TracingService:
+`PluginTelemetry` is intentionally named as a separate sink because Dataverse's telemetry logger is **not** `Microsoft.Extensions.Logging.ILogger`.
+
+If your environment enables Dataverse Plugin Telemetry / Application Insights integration, you can keep the same `ILogger` calls and only adjust selected sinks.
+
+When calling `GetLogger(params LogSink[] sinks)`:
+- no sinks defaults to `TracingService`
+- one sink logs to that sink
+- multiple sinks write to all specified sinks
 
 ```csharp
 // Logs to TracingService only
@@ -248,7 +313,7 @@ var logger1 = serviceProvider.GetLogger(ServiceProviderExtensions.LogSink.Tracin
 // Logs to PluginTelemetry only
 var logger2 = serviceProvider.GetLogger(ServiceProviderExtensions.LogSink.PluginTelemetry);
 
-// Logs to both (default)
+// Logs to both
 var logger3 = serviceProvider.GetLogger(
     ServiceProviderExtensions.LogSink.PluginTelemetry, 
     ServiceProviderExtensions.LogSink.TracingService
@@ -301,7 +366,6 @@ Abstract base class implementing `IPlugin` with built-in logging and exception h
 
 | Member | Type | Description |
 |---|---|---|
-| `TimeProvider` | `TimeProvider` | Encapsulates DateTime access for testability |
 | `ExecuteInternal(serviceProvider)` | `abstract void` | Implement your plugin logic here |
 
 ---
@@ -338,8 +402,8 @@ GetOrganizationService()                                       // IOrganizationS
 GetOrganizationService(Guid userId)                           // IOrganizationService (specific user)
 GetElevatedOrganizationService()                              // IOrganizationService (system)
 GetTracingService()                                           // ITracingService
-GetLogger()                                                   // ILogger (default sinks)
-GetLogger(params LogSink[] sinks)                             // ILogger (specific sinks)
+GetLogger()                                                   // Microsoft.Xrm.Sdk.PluginTelemetry.ILogger
+GetLogger(params LogSink[] sinks)                             // Microsoft.Extensions.Logging.ILogger
 GetTimeProvider()                                             // TimeProvider
 GetManagedIdentityService()                                   // IManagedIdentityService
 ```
