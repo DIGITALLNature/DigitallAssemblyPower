@@ -57,8 +57,9 @@ public class SerializerServiceTests
     public async Task JsonDeserialize_TidyMode_ReplacesEmptyStringWithNull()
     {
         const string json = "{\"Name\":\"\",\"Value\":0}";
+        var service = new DataContractSerializerServiceFactory(tidy: true).CreateSerializerService();
 
-        var result = _service.JsonDeserialize<SampleData>(json, tidy: true);
+        var result = service.JsonDeserialize<SampleData>(json);
 
         await Assert.That(result).IsNotNull();
         await Assert.That(result!.Name).IsNull();

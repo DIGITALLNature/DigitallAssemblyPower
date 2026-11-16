@@ -64,7 +64,8 @@
 		],
 		"includeSymbols": true,
 		"projectPath": [
-			"src/Digitall.Plugins/Digitall.Plugins.csproj"
+			"src/Digitall.Plugins/Digitall.Plugins.csproj",
+			"src/Digitall.Plugins.Serialization.SystemTextJson/Digitall.Plugins.Serialization.SystemTextJson.csproj"
 		],
 		"npmPublish": false,
 		"usePackageVersion": true

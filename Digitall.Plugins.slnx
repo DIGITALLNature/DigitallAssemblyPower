@@ -4,6 +4,7 @@
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/Digitall.Plugins/Digitall.Plugins.csproj" Type="C#" />
+    <Project Path="src/Digitall.Plugins.Serialization.SystemTextJson/Digitall.Plugins.Serialization.SystemTextJson.csproj" Type="C#" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Digitall.Plugins.Tests/Digitall.Plugins.Tests.csproj" Type="C#" />
