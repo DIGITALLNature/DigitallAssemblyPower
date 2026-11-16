@@ -59,17 +59,17 @@ public class SystemTextJsonSerializerServiceTests
     private sealed class SampleContract
     {
         [JsonPropertyName("display_name")]
-        public string DisplayName { get; set; }
+        public string DisplayName { get; init; }
 
         [JsonPropertyName("status")]
         [JsonConverter(typeof(JsonStringEnumConverter<SampleStatus>))]
-        public SampleStatus Status { get; set; }
+        public SampleStatus Status { get; init; }
 
         [JsonExtensionData]
-        public IDictionary<string, JsonElement> AdditionalProperties { get; set; } = new Dictionary<string, JsonElement>();
+        public IDictionary<string, JsonElement> AdditionalProperties { get; init; } = new Dictionary<string, JsonElement>();
     }
 
-    public enum SampleStatus
+    private enum SampleStatus
     {
         Accepted,
         Rejected

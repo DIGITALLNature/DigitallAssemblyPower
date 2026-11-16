@@ -13,8 +13,6 @@ public sealed class SerializerService(
     DataContractJsonSerializerSettings settings = null,
     bool tidy = false) : ISerializerService
 {
-    private readonly bool _tidy = tidy;
-
     public DataContractJsonSerializerSettings Settings { get; } = settings ?? new DataContractJsonSerializerSettings
         {
             UseSimpleDictionaryFormat = true,
@@ -53,7 +51,7 @@ public sealed class SerializerService(
             return default;
         }
 
-        var cleanJson = !_tidy ? json : json.Replace("\"\"", "null");
+        var cleanJson = !tidy ? json : json.Replace("\"\"", "null");
 
         using var ms = new MemoryStream(Encoding.UTF8.GetBytes(cleanJson));
         return (T)new DataContractJsonSerializer(typeof(T), Settings).ReadObject(ms);
