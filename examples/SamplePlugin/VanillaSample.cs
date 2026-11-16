@@ -9,6 +9,9 @@ using Microsoft.Xrm.Sdk;
 
 namespace SamplePlugin
 {
+    /// <summary>
+    /// Demonstrates a conventional <see cref="IPlugin"/> implementation.
+    /// </summary>
     public class VanillaSample : IPlugin
     {
 

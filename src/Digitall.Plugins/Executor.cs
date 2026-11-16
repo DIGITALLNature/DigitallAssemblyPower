@@ -78,7 +78,7 @@ public abstract class Executor : IPlugin
     /// <returns>ExecutionResult of the process.</returns>
     protected abstract ExecutionResult Execute();
 
-    #region Delegation of PluginCore
+    #region Typed context surface
 
     /// <summary>
     ///     Invokes the OrganizationServiceFactory; prefer to use the SecuredOrganizationService or ElevatedOrganizationService
