@@ -1,3 +1,22 @@
+# [3.0.0-beta.1](https://github.com/DIGITALLNature/DigitallAssemblyPower/compare/v2.0.0...v3.0.0-beta.1) (2026-11-16)
+
+* feat(serialization)!: add optional System.Text.Json support ([f1007fe](https://github.com/DIGITALLNature/DigitallAssemblyPower/commit/f1007fec9aa137ce6f8e8f49136a51c60af96745))
+
+### Bug Fixes
+
+* **extensions:** resolve null and empty attribute values ([29ff907](https://github.com/DIGITALLNature/DigitallAssemblyPower/commit/29ff907fe1aa0c4f8a6238a4471faebe79f8df7c))
+* **qodana:** address new PR quality findings ([2a24128](https://github.com/DIGITALLNature/DigitallAssemblyPower/commit/2a24128e4d13e95c72903c30a24d50132d8bbb64))
+* **qodana:** clear remaining PR findings ([cdbc0b0](https://github.com/DIGITALLNature/DigitallAssemblyPower/commit/cdbc0b02c2f388ac7d4fe83ffdbcdf2f874114c3))
+
+### Features
+
+* **plugins:** expose testable time provider ([a60e2d2](https://github.com/DIGITALLNature/DigitallAssemblyPower/commit/a60e2d211aed33ccf61d1f4f848b9542788d164d))
+* **samples:** add account name change audit example ([035e1e2](https://github.com/DIGITALLNature/DigitallAssemblyPower/commit/035e1e21b9f9e281b6204310f75527b2b67768d5))
+
+### BREAKING CHANGES
+
+* ISerializerService now exposes backend-neutral generic methods and backend configuration is supplied through factories.
+
 # [2.0.0](https://github.com/DIGITALLNature/DigitallAssemblyPower/compare/v1.0.0...v2.0.0) (2026-07-02)
 
 
