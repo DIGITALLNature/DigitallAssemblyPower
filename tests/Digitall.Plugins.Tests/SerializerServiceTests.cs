@@ -24,7 +24,7 @@ public class SerializerServiceTests
     {
         var data = new SampleData { Name = "Test", Value = 42 };
 
-        var json = _service.JsonSerialize<SampleData>(data);
+        var json = _service.JsonSerialize(data);
 
         await Assert.That(json).IsNotNull();
         await Assert.That(json).Contains("Test");
@@ -45,7 +45,7 @@ public class SerializerServiceTests
         const int expectedValue = 99;
         var original = new SampleData { Name = "RoundtripTest", Value = expectedValue };
 
-        var json = _service.JsonSerialize<SampleData>(original);
+        var json = _service.JsonSerialize(original);
         var restored = _service.JsonDeserialize<SampleData>(json);
 
         await Assert.That(restored).IsNotNull();
@@ -57,8 +57,9 @@ public class SerializerServiceTests
     public async Task JsonDeserialize_TidyMode_ReplacesEmptyStringWithNull()
     {
         const string json = "{\"Name\":\"\",\"Value\":0}";
+        var service = new DataContractSerializerServiceFactory(tidy: true).CreateSerializerService();
 
-        var result = _service.JsonDeserialize<SampleData>(json, tidy: true);
+        var result = service.JsonDeserialize<SampleData>(json);
 
         await Assert.That(result).IsNotNull();
         await Assert.That(result!.Name).IsNull();

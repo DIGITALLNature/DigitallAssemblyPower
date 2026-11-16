@@ -159,4 +159,35 @@ public class EntityAttributeExtensionTests
 
         await Assert.That(ctx.IsEntityAttributeValueNullOrEmpty("name")).IsFalse();
     }
+
+    [Test]
+    public async Task IsEntityAttributeValueNullOrEmpty_WhenTargetHasEmptyString_ReturnsTrue()
+    {
+        var target = new Entity("account") { Id = Guid.NewGuid(), ["name"] = string.Empty };
+        var ctx = BuildContext(target);
+
+        await Assert.That(ctx.IsEntityAttributeValueNullOrEmpty("name")).IsTrue();
+    }
+
+    [Test]
+    public async Task IsEntityAttributeValueNullOrEmpty_WhenTargetIsNullAndPreImageHasValue_ReturnsTrue()
+    {
+        var id = Guid.NewGuid();
+        var target = new Entity("account") { Id = id, ["name"] = null };
+        var preImage = new Entity("account") { Id = id, ["name"] = "Previous" };
+        var ctx = BuildContext(target, preImage);
+
+        await Assert.That(ctx.IsEntityAttributeValueNullOrEmpty("name")).IsTrue();
+    }
+
+    [Test]
+    public async Task IsEntityAttributeValueNullOrEmpty_WhenTargetOmitsValue_FallsBackToPreImage()
+    {
+        var id = Guid.NewGuid();
+        var target = new Entity("account") { Id = id };
+        var preImage = new Entity("account") { Id = id, ["name"] = "Previous" };
+        var ctx = BuildContext(target, preImage);
+
+        await Assert.That(ctx.IsEntityAttributeValueNullOrEmpty("name")).IsFalse();
+    }
 }

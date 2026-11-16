@@ -48,6 +48,15 @@ public abstract partial class PluginSkeleton : IPlugin
         }
     }
 
+    /// <summary>
+    /// Gets or sets the time provider used by this plugin. Defaults to system time.
+    /// </summary>
+    public TimeProvider TimeProvider
+    {
+        get => field ??= TimeProvider.System;
+        protected set => field = value ?? throw new ArgumentNullException(nameof(value));
+    }
+
     protected abstract void ExecuteInternal(IServiceProvider serviceProvider);
 
     [LoggerMessage(LogLevel.Information, "Execution started {PluginType}: Message {MessageName} - Stage {ExecutionStage} - Mode {ExecutionMode}")]

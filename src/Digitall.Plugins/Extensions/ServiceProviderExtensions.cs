@@ -77,6 +77,22 @@ public static class ServiceProviderExtensions
         public ISerializerService GetSerializerService() => new SerializerService();
 
         /// <summary>
+        /// Retrieves a serializer service created by the specified factory.
+        /// </summary>
+        /// <param name="factory">The serializer service factory and its configuration.</param>
+        /// <returns>The configured serializer service.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="factory"/> is null.</exception>
+        /// <exception cref="InvalidOperationException">The factory returns null.</exception>
+        [SuppressMessage("Performance", "CA1822")]
+        public ISerializerService GetSerializerService(ISerializerServiceFactory factory)
+        {
+            if (factory == null) throw new ArgumentNullException(nameof(factory));
+
+            return factory.CreateSerializerService()
+                ?? throw new InvalidOperationException("The serializer service factory returned null.");
+        }
+
+        /// <summary>
         /// Retrieves the <see cref="TimeProvider"/> from the service provider.
         /// It should be used when implementing date-dependent logic and enables unit testing.
         /// In Dataverse runtime, this falls back to <see cref="TimeProvider.System"/> when no provider is registered.

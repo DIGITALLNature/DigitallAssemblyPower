@@ -159,12 +159,22 @@ public static class EntityAttributeExtension
         {
             Debug.Assert(pluginExecutionContext != null, nameof(pluginExecutionContext) + " != null");
             var entity = pluginExecutionContext.GetTarget<Entity>();
-            var preImage = pluginExecutionContext.GetPreImage<Entity>();
-
             if (entity == null) return false;
-            var entityAttributeNullOrMissing = !entity.Contains(attribute) || entity[attribute] == null;
-            var preImageAttributeNullOrMissing = preImage == null || !preImage.Contains(attribute) || preImage[attribute] == null;
-            return entityAttributeNullOrMissing && preImageAttributeNullOrMissing;
+
+            object value;
+            if (entity.Contains(attribute))
+            {
+                value = entity[attribute];
+            }
+            else
+            {
+                var preImage = pluginExecutionContext.GetPreImage<Entity>();
+                if (preImage == null || !preImage.Contains(attribute)) return true;
+
+                value = preImage[attribute];
+            }
+
+            return value is null or "";
         }
 
         /// <summary>

@@ -5,6 +5,7 @@ using System;
 using System.Threading.Tasks;
 using Digitall.Dataverse.Testing;
 using Digitall.Dataverse.Testing.Extensions;
+using Microsoft.Extensions.Time.Testing;
 using Microsoft.Xrm.Sdk;
 
 namespace Digitall.Plugins.Tests;
@@ -17,6 +18,8 @@ public class PluginSkeletonTests
         public bool ExecuteInternalCalled { get; private set; }
         public IServiceProvider LastServiceProvider { get; private set; }
         public bool ShouldThrow { get; init; }
+
+        public void SetTimeProvider(TimeProvider timeProvider) => TimeProvider = timeProvider;
 
         protected override void ExecuteInternal(IServiceProvider serviceProvider)
         {
@@ -70,4 +73,30 @@ public class PluginSkeletonTests
         await Assert.That(ex).IsTypeOf<InvalidOperationException>();
     }
 
+    [Test]
+    public async Task TimeProvider_CanBeOverridden_ReturnsInjectedTime()
+    {
+        var expectedTime = new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        var plugin = new TrackingPlugin();
+        plugin.SetTimeProvider(new FakeTimeProvider(expectedTime));
+
+        await Assert.That(plugin.TimeProvider.GetUtcNow()).IsEqualTo(expectedTime);
+    }
+
+    [Test]
+    public async Task TimeProvider_Default_IsSystemTimeProvider()
+    {
+        var plugin = new TrackingPlugin();
+
+        await Assert.That(plugin.TimeProvider).IsEqualTo(TimeProvider.System);
+    }
+
+    [Test]
+    public async Task TimeProvider_CannotBeSetToNull_ThrowsArgumentNullException()
+    {
+        var plugin = new TrackingPlugin();
+
+        var ex = await Assert.That(() => plugin.SetTimeProvider(null)).ThrowsException();
+        await Assert.That(ex).IsTypeOf<ArgumentNullException>();
+    }
 }
