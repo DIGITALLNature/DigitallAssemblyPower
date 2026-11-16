@@ -38,6 +38,7 @@ NuGet package for Microsoft Dataverse plugin development that stays close to the
   - [Enums](#enums)
 - [Examples](#examples)
 - [Requirements](#requirements)
+- [Developer Toolchain](#developer-toolchain)
 - [License](#license)
 
 ---
@@ -531,6 +532,10 @@ For `AccountNameChangeAuditSample`, register a synchronous Account Update step a
 - Plug-in projects using this library should target .NET Framework 4.8.1
 - Microsoft.Xrm.Sdk 9.0 or higher
 - Microsoft.Extensions.Logging 6.0 or higher
+
+## Developer Toolchain
+
+GitHub Actions uses .NET SDK 10 for builds and tests. The release workflow uses Node.js 26.13.1 and the pnpm version pinned in `package.json`; the Node.js requirement is declared there as well.
 
 ---
 
