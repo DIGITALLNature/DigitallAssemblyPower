@@ -43,5 +43,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Digitall.Plugins\Digitall.Plugins.csproj" />
     <ProjectReference Include="..\..\src\Digitall.Plugins.Serialization.SystemTextJson\Digitall.Plugins.Serialization.SystemTextJson.csproj" />
+    <ProjectReference Include="..\..\examples\SamplePlugin\SamplePlugin.csproj" />
   </ItemGroup>
 </Project>

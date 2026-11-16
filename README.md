@@ -473,13 +473,28 @@ GetRetrieveMultipleEntities()                                 // EntityCollectio
 
 #### EntityAttributeExtension
 
-Available on `Entity`:
+These methods are available on `IPluginExecutionContext` and `Executor`, not on `Entity`:
+
+| Method | Behavior |
+| ------ | -------- |
+| `GetEntityAttributeValue<T>(string attribute)` | Reads from the target entity first, then the pre-image, then returns `default`. |
+| `IsEntityAttributeValueNew(string attribute)` | Returns `true` when the target contains the attribute and the pre-image does not. |
+| `IsEntityAttributeValueChanged<T>(string attribute)` | Checks whether the target contains a value different from the pre-image. |
+| `IsEntityAttributeValueNullOrEmpty(string attribute)` | Returns `true` when the target value, or the pre-image value if omitted by the target, is null or an empty string. |
+| `MergeEntity<T>()` | Merges target attributes over the pre-image into the early-bound entity type. |
+
+Use the context extensions to compare an update with its pre-image:
 
 ```csharp
-HasAttribute(string attributeName)                            // bool
-GetAttributeValue<T>(string attributeName, T defaultValue)   // T
-GetAttribute<T>(string attributeName)                         // T
+var context = serviceProvider.GetExecutionContext();
+if (context.IsEntityAttributeValueChanged<string>("name"))
+{
+    var previousName = context.GetPreImage<Entity>()?.GetAttributeValue<string>("name");
+    var currentName = context.GetEntityAttributeValue<string>("name");
+}
 ```
+
+Register the required pre-image and attributes on the plugin step; otherwise comparisons cannot use the original values.
 
 ---
 
@@ -504,6 +519,9 @@ See the `examples/SamplePlugin` directory for complete working examples:
 - **VanillaSample.cs**: Traditional IPlugin implementation
 - **SkeletonSample.cs**: Using PluginSkeleton base class
 - **ExecutorSample.cs**: Using Executor base class
+- **AccountNameChangeAuditSample.cs**: Account Update example that compares a pre-image and creates a related audit note.
+
+For `AccountNameChangeAuditSample`, register a synchronous Account Update step and a pre-image containing the `name` attribute. The plug-in creates an Annotation when the account name changes, so the executing user needs the corresponding create privilege.
 
 ---
 
