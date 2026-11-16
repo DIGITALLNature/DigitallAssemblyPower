@@ -11,8 +11,6 @@ namespace Digitall.Plugins;
 
 public abstract partial class PluginSkeleton : IPlugin
 {
-    private TimeProvider timeProvider = TimeProvider.System;
-
     /// <summary>
     /// Executes the plugin using the provided service provider.
     /// </summary>
@@ -55,8 +53,8 @@ public abstract partial class PluginSkeleton : IPlugin
     /// </summary>
     public TimeProvider TimeProvider
     {
-        get => timeProvider;
-        protected set => timeProvider = value ?? throw new ArgumentNullException(nameof(value));
+        get => field ??= TimeProvider.System;
+        protected set => field = value ?? throw new ArgumentNullException(nameof(value));
     }
 
     protected abstract void ExecuteInternal(IServiceProvider serviceProvider);

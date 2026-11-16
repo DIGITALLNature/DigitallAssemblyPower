@@ -22,15 +22,28 @@ public class SystemTextJsonSerializerServiceTests
         const string input = "{\"display_name\":\"PBV contract\",\"status\":\"Accepted\",\"future_field\":{\"enabled\":true}}";
 
         var data = serializer.JsonDeserialize<SampleContract>(input);
-        var json = serializer.JsonSerialize(data);
 
         await Assert.That(data).IsNotNull();
         await Assert.That(data!.DisplayName).IsEqualTo("PBV contract");
         await Assert.That(data.Status).IsEqualTo(SampleStatus.Accepted);
         await Assert.That(data.AdditionalProperties["future_field"].GetProperty("enabled").GetBoolean()).IsTrue();
+
+        var json = serializer.JsonSerialize(new SampleContract
+        {
+            DisplayName = data.DisplayName,
+            Status = data.Status,
+            AdditionalProperties = new Dictionary<string, JsonElement>
+            {
+                ["future_field"] = data.AdditionalProperties["future_field"]
+            }
+        });
+
         await Assert.That(json).Contains("\"display_name\":\"PBV contract\"");
         await Assert.That(json).Contains("\"status\":\"Accepted\"");
         await Assert.That(json).Contains("\"future_field\":{\"enabled\":true}");
+
+        var rejected = serializer.JsonDeserialize<SampleContract>("{\"status\":\"Rejected\"}");
+        await Assert.That(rejected!.Status).IsEqualTo(SampleStatus.Rejected);
     }
 
     [Test]
@@ -43,7 +56,7 @@ public class SystemTextJsonSerializerServiceTests
         await Assert.That(ex).IsTypeOf<ArgumentNullException>();
     }
 
-    public sealed class SampleContract
+    private sealed class SampleContract
     {
         [JsonPropertyName("display_name")]
         public string DisplayName { get; set; }

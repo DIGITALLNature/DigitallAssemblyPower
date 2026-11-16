@@ -174,7 +174,7 @@ public static class EntityAttributeExtension
                 value = preImage[attribute];
             }
 
-            return value == null || value is string stringValue && stringValue.Length == 0;
+            return value is null or "";
         }
 
         /// <summary>
