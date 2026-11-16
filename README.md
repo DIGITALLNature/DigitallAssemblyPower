@@ -267,6 +267,8 @@ Use `TimeProvider` for date/time-dependent plugin logic instead of directly call
 
 At runtime, `GetTimeProvider()` falls back to `TimeProvider.System` when no custom provider is registered by the host. In tests, inject a fake provider (for example `FakeTimeProvider` from [`Microsoft.Extensions.TimeProvider.Testing`](https://www.nuget.org/packages/Microsoft.Extensions.TimeProvider.Testing)), optionally together with [`Digitall.Dataverse.Testing`](https://www.nuget.org/packages/Digitall.Dataverse.Testing) for full in-memory Dataverse test scenarios.
 
+`PluginSkeleton` also exposes a `TimeProvider` property that defaults to `TimeProvider.System`. Derived plugin classes can set its protected setter to inject a `FakeTimeProvider` in tests.
+
 ```csharp
 var timeProvider = serviceProvider.GetTimeProvider();
 var utcNow = timeProvider.GetUtcNow();
@@ -366,6 +368,7 @@ Abstract base class implementing `IPlugin` with built-in logging and exception h
 
 | Member | Type | Description |
 |---|---|---|
+| `TimeProvider` | `TimeProvider` | Current time provider; defaults to `TimeProvider.System` |
 | `ExecuteInternal(serviceProvider)` | `abstract void` | Implement your plugin logic here |
 
 ---
